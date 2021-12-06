@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit>
+  <extensions>
+    <extension class="Qase\PHPUnit\Reporter" />
+  </extensions>
+  <testsuites>
+    <testsuite name="qase-phpunit">
+      <directory>./tests</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <env name="QASE_PROJECT_CODE" value="project_code" force="true" />
+    <env name="QASE_API_BASE_URL" value="https://api.qase.io/v1" force="true" />
+    <env name="QASE_API_TOKEN" value="api_key" force="true" />
+    </php>  
+</phpunit>

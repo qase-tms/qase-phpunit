@@ -1,18 +1,18 @@
 {
-  "name": "qase/phpunit-reporter",
-  "description": "Qase TMS PHPUnit reporter",
-  "homepage": "https://developers.qase.io",
-  "type": "library",
-  "license": "Apache-2.0",
-  "autoload": {
-    "psr-4": {
-      "Qase\\PHPUnit\\": "src/"
-    }
-  },
-  "require": {
-    "php": "^7.3 || ^8.0",
-    "qase/api": "dev-main",
-    "phpunit/phpunit": "^8.0 || ^9.0"
-  },
-  "minimum-stability": "dev"
+    "name": "package/name",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "qase/phpunit-reporter": "dev-main",
+        "phpunit/phpunit": "^9.0"
+    },
+    "minimum-stability": "dev"
 }
