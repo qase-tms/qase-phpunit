@@ -4,7 +4,7 @@
 
 Install reporter:
 ```bash
-composer require qase/phpunit-reporter
+composer require qase/phpunit-reporter 
 ```
 
 ## Usage
