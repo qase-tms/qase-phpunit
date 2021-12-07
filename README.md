@@ -43,6 +43,11 @@ After that you can run your tests by providing custom reporter:
 ```
 ![alt text](screenshots/Screenshot_2.jpg "text")​
 
+The test run will be performed and available at:
+```bash
+https://app.qase.io/run/QASE_PROJECT_CODE
+```
+
 ## Configuration
 
 Reporter options (* - required):
