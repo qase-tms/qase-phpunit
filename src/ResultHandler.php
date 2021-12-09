@@ -66,7 +66,7 @@ class ResultHandler
             }
         }
 
-        $this->logger->write("publishing results for run #$runId... ");
+        $this->logger->write("publishing results for run #{$runId}... ");
 
         $this->repo->getResultsApi()->createResultBulk(
             $runResult->getProjectCode(),
@@ -77,7 +77,7 @@ class ResultHandler
         $this->logger->writeln('OK', '');
 
         if ($runResult->getCompleteRunAfterSubmit()) {
-            $this->logger->write("completing run #$runId... ");
+            $this->logger->write("completing run #{$runId}... ");
 
             $this->repo->getRunsApi()->completeRun($runResult->getProjectCode(), $runId);
 
@@ -87,13 +87,13 @@ class ResultHandler
 
     private function createRunId($projectCode): int
     {
-        $runName = 'Automated test run ' . date('Y-m-d H:i:s');
+        $runName = 'Automated run ' . date('Y-m-d H:i:s');
         $runBody = new RunCreate([
             "title" => $runName,
             'isAutotest' => true,
         ]);
 
-        $this->logger->write("creating run '$runName'... ");
+        $this->logger->write("creating run '{$runName}'... ");
 
         $response = $this->repo->getRunsApi()->createRun($projectCode, $runBody);
 
