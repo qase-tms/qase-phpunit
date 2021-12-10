@@ -43,29 +43,47 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
      */
     private $logger;
 
+    /**
+     * @var Config
+     */
+    private $config;
+
     public function __construct()
     {
         $this->logger = new ConsoleLogger();
+        $this->config = new Config();
 
-        foreach (['QASE_PROJECT_CODE', 'QASE_API_BASE_URL', 'QASE_API_TOKEN',] as $parameter) {
-            if (!getenv($parameter)) {
-                throw new \LogicException($parameter . ' environment variable is not set. Reporting to qase.io is disabled.');
-            }
-        }
+        $this->validateConfig();
 
         $this->runResult = new RunResult(
-            getenv('QASE_PROJECT_CODE'),
-            getenv('QASE_RUN_ID') ? (int)getenv('QASE_RUN_ID') : null,
-            getenv('QASE_COMPLETE_RUN_AFTER_SUBMIT') === '1'
+            $this->config->getProjectCode(),
+            $this->config->getRunId(),
+            $this->config->getCompleteRunAfterSubmit(),
         );
 
         $this->repo = new Repository($this->runResult->getProjectCode(), $this->logger);
         $this->resultHandler = new ResultHandler($this->repo, $this->logger);
     }
 
+    private function validateConfig(): void
+    {
+        if (!$this->config->getBaseUrl() || !$this->config->getApiToken() || !$this->config->getProjectCode()) {
+            throw new \LogicException(sprintf(
+                'The Qase PHPUnit reporter needs the following environment variables to be set: %s.',
+                implode(',', Config::REQUIRED_PARAMS)
+            ));
+        }
+    }
+
     public function executeBeforeFirstTest(): void
     {
-        $this->repo->init();
+        $this->repo->init(
+            $this->config,
+            [
+                'X-Platform' => sprintf('php=%s', phpversion()),
+                'X-Client' => sprintf('qase-phpunit=%s', self::VERSION),
+            ]
+        );
 
         $this->validateProjectCode();
     }
@@ -90,7 +108,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
         $this->accumulateTestResult(self::FAILED, $test, $time, $message);
     }
 
-    private function accumulateTestResult(string $status, string $test, float $time, string $message = NULL): void
+    private function accumulateTestResult(string $status, string $test, float $time, string $message = null): void
     {
         $caseId = $this->getCaseId($test);
 
@@ -117,7 +135,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     private function getCaseId(string $testName): ?int
     {
         if (!preg_match_all('/(?P<namespace>.+)::(?P<methodName>\w+)/', $testName, $testNameMatches)) {
-            $this->logger->writeln("WARNING: Could not parse test name '$testName'");
+            $this->logger->writeln("WARNING: Could not parse test name '{$testName}'");
             return null;
         }
 

@@ -101,18 +101,15 @@ class Repository
         return $this->resultsApi;
     }
 
-    public function init()
+    public function init(Config $config, array $headers)
     {
         $this->client = new \GuzzleHttp\Client([
-            'headers' => [
-                'X-Platform' => sprintf('php=%s', phpversion()),
-                'X-Client' => sprintf('qase-phpunit=%s', Reporter::VERSION),
-            ],
+            'headers' => $headers,
         ]);
 
         $config = Configuration::getDefaultConfiguration()
-            ->setHost(getenv('QASE_API_BASE_URL'))
-            ->setApiKey('Token', getenv('QASE_API_TOKEN'));
+            ->setHost($config->getBaseUrl())
+            ->setApiKey('Token', $config->getApiToken());
 
         $this->runsApi = new RunsApi($this->client, $config);
         $this->projectsApi = new ProjectsApi($this->client, $config);
@@ -155,27 +152,42 @@ class Repository
 
     private function getAllEntities(Request $request): array
     {
-        $entities = [];
-
         $limit = 100;
         $offset = 0;
 
-        do {
-            $rawResponse = $this->client->send(
-                $request,
-                [
-                    'query' => ['limit' => $limit, 'offset' => $offset,],
-                ]
-            );
+        $response = $this->getEntities($request, $limit, $offset);
 
-            $response = \GuzzleHttp\json_decode((string)$rawResponse->getBody(), true);
+        $entities = $response['entities'];
+        $total = $response['total'];
 
-            $entities = array_merge($entities, $response['result']['entities']);
+        $numOfPages = (int)ceil($total / $limit);
 
-            $offset += $limit;
-        } while (count($response['result']['entities']) > 0 && count($entities) < $response['result']['total']);
+        for ($i = 1; $i < $numOfPages; $i++) {
+            $response = $this->getEntities($request, $limit, $limit * $i);
+            $responseEntities = $response['entities'];
+
+            $entities = array_merge($entities, $responseEntities);
+
+            if (count($responseEntities) === 0 || count($entities) >= $total) {
+                break;
+            }
+        }
 
         return $entities;
+    }
+
+    private function getEntities(Request $request, int $limit, int $offset)
+    {
+        $rawResponse = $this->client->send(
+            $request,
+            [
+                'query' => ['limit' => $limit, 'offset' => $offset,],
+            ]
+        );
+
+        $response = \GuzzleHttp\json_decode((string)$rawResponse->getBody(), true);
+
+        return $response['result'];
     }
 
     public function findOrCreateCase(string $suiteTitle, string $testTitle): int
@@ -213,7 +225,7 @@ class Repository
 
         $this->existingCasesGroupedBySuite[$suiteId][$testTitle] = $case->getResult()->getId();
 
-        $this->logger->writeln("created new test case '$testTitle' with ID " . $case->getResult()->getId());
+        $this->logger->writeln("created new test case '{$testTitle}' with ID " . $case->getResult()->getId());
 
         return $case->getResult()->getId();
     }
@@ -268,7 +280,7 @@ class Repository
         }
 
         if (!isset($newSuite)) {
-            throw new \RuntimeException("could not create a suite '$suiteTitle'");
+            throw new \RuntimeException("could not create a suite '{$suiteTitle}'");
         }
 
         return $newSuite->getResult()->getId();
