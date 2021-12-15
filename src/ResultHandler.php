@@ -4,25 +4,17 @@ declare(strict_types=1);
 
 namespace Qase\PHPUnit;
 
+use PHPUnit\Util\Exception;
 use Qase\Client\Model\ResultCreate;
 use Qase\Client\Model\ResultCreateBulk;
 use Qase\Client\Model\RunCreate;
 
 class ResultHandler
 {
-    private const PASSED = 'passed';
-    private const SKIPPED = 'skipped';
-    private const FAILED = 'failed';
+    private const SUITE_TITLE_SEPARATOR = "\t";
 
-    /**
-     * @var ConsoleLogger
-     */
-    private $logger;
-
-    /**
-     * @var Repository
-     */
-    private $repo;
+    private ConsoleLogger $logger;
+    private Repository $repo;
 
     public function __construct(Repository $repo, ConsoleLogger $logger)
     {
@@ -30,41 +22,81 @@ class ResultHandler
         $this->repo = $repo;
     }
 
-    public function handle(RunResult $runResult): void
+    public function handle(RunResult $runResult, string $rootSuiteTitle): void
     {
         $this->logger->writeln('', '');
         $this->logger->writeln('Results handling started');
 
-        if (empty($runResult->getResults())) {
+        $bulkResults = $this->prepareBulkResults($runResult, $rootSuiteTitle);
+
+        if ($bulkResults === []) {
             $this->logger->writeln('WARNING: did not find any tests to report in the Qase TMS');
             return;
         }
 
-        $runId =
-            $runResult->getRunId() !== null ?
-                $runResult->getRunId() :
-                $this->createRunId(
-                    $runResult->getProjectCode()
-                );
+        $this->submit($runResult, $bulkResults);
+    }
 
+    private function prepareBulkResults(RunResult $runResult, string $rootSuiteTitle): array
+    {
         $bulkResults = [];
-        foreach ($runResult->getResults() as $caseId => $resultsForCase) {
-            foreach ($resultsForCase as $item) {
-                $resultData = [
-                    'caseId' => $caseId,
-                    'status' => $item['status'],
-                    'timeMs' => (int)($item['time'] * 1000.0),
-                    'stacktrace' => $item['status'] === self::FAILED ? $item['message'] : null,
-                    'comment' => "{$item['testName']} in {$item['time']}s",
-                ];
+        $addedForSending = [];
 
-                if ($item['params']) {
-                    $resultData['param'] = ['phpunit' => $item['params']];
+        foreach ($runResult->getResults() as $item) {
+            $resultData = [
+                'status' => $item['status'],
+                'timeMs' => (int)($item['time'] * 1000.0),
+                'stacktrace' => $item['stacktrace'],
+                'comment' => "{$item['full_test_name']} in {$item['time']}s",
+            ];
+
+            list($namespace, $methodName) = $this->explodeFullTestName($item['full_test_name']);
+
+            $caseTitle = $this->clearPrefix($methodName, ['test']);
+            $suiteTitle = $rootSuiteTitle . self::SUITE_TITLE_SEPARATOR .
+                str_replace('\\', self::SUITE_TITLE_SEPARATOR, $this->clearPrefix($namespace, ['Test\\', 'Tests\\']));
+
+            $caseId = $this->getCaseIdFromAnnotation($namespace, $methodName);
+            if ($caseId) {
+                if (!$this->repo->caseIdExists($caseId)) {
+                    $this->logger->writeln(
+                        "{$namespace}::{$methodName} skipped due to @qaseId contains unknown Qase ID: {$caseId}",
+                    );
+
+                    continue;
                 }
 
-                $bulkResults[] = new ResultCreate($resultData);
+                $resultData['caseId'] = $caseId;
+            } else {
+                $resultData['case'] = [
+                    'title' => $caseTitle,
+                    'suite_title' => $suiteTitle,
+                    'automation' => 2,
+                ];
+
+            }
+
+            if (preg_match('/with data set "(.+)"|(#\d+)/U', $item['full_test_name'], $paramMatches, PREG_UNMATCHED_AS_NULL) === 1) {
+                $resultData['param'] = ['phpunit' => $paramMatches[1] ?? $paramMatches[2]];
+            }
+
+            $bulkResults[] = new ResultCreate($resultData);
+            $addedForSending[$suiteTitle][] = $caseTitle;
+        }
+
+        foreach ($addedForSending as $suiteTitle => $caseTitles) {
+            foreach (array_unique($caseTitles) as $caseTitle) {
+                $suiteTitle = str_replace(self::SUITE_TITLE_SEPARATOR, '\\', $suiteTitle);
+                $this->logger->writeln("[added for sending]'{$suiteTitle}' '{$caseTitle}'");
             }
         }
+
+        return $bulkResults;
+    }
+
+    private function submit(RunResult $runResult, array $bulkResults): void
+    {
+        $runId = $runResult->getRunId() ?: $this->createRunId($runResult->getProjectCode());
 
         $this->logger->write("publishing results for run #{$runId}... ");
 
@@ -100,5 +132,52 @@ class ResultHandler
         $this->logger->writeln('OK', '');
 
         return $response->getResult()->getId();
+    }
+
+    private function getCaseIdFromAnnotation(string $namespace, string $methodName): ?int
+    {
+        try {
+            $reflection = new \ReflectionMethod($namespace, $methodName);
+        } catch (\ReflectionException $e) {
+            throw new Exception($e->getMessage(), (int)$e->getCode(), $e);
+        }
+
+        $docComment = $reflection->getDocComment();
+        if (!$docComment || !preg_match_all('/\@qaseId?[ \t]+(?P<caseId>.*?)[ \t]*\r?$/m', $docComment, $qaseIdMatches)) {
+            return null;
+        }
+
+        if (!($qaseIdMatches['caseId'][0] ?? false)) {
+            return null;
+        }
+
+        return (int)$qaseIdMatches['caseId'][0] ?: null;
+    }
+
+    /**
+     * @param string $title
+     * @param array[string] $prefixes
+     * @return string
+     */
+    private function clearPrefix(string $title, array $prefixes): string
+    {
+        foreach ($prefixes as $prefix) {
+            $prefixLength = mb_strlen($prefix);
+            if (strncmp($title, $prefix, $prefixLength) === 0) {
+                return mb_substr($title, $prefixLength);
+            }
+        }
+
+        return $title;
+    }
+
+    private function explodeFullTestName($fullTestName): array
+    {
+        if (!preg_match_all('/(?P<namespace>.+)::(?P<methodName>\w+)/', $fullTestName, $testNameMatches)) {
+            $this->logger->writeln("WARNING: Could not parse test name '{$fullTestName}'");
+            throw new \RuntimeException('Could not parse test name');
+        }
+
+        return [$testNameMatches['namespace'][0], $testNameMatches['methodName'][0]];
     }
 }

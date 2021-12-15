@@ -10,36 +10,19 @@ class Config
         'QASE_API_TOKEN',
     ];
 
-    /**
-     * @var string|null
-     */
-    private $projectCode;
-
-    /**
-     * @var string|null
-     */
-    private $baseUrl;
-
-    /**
-     * @var string|null
-     */
-    private $apiToken;
-
-    /**
-     * @var int|null
-     */
-    private $runId;
-
-    /**
-     * @var bool
-     */
-    private $completeRunAfterSubmit;
+    private ?string $projectCode;
+    private ?string $baseUrl;
+    private ?string $apiToken;
+    private ?int $runId;
+    private ?string $rootSuiteTitle;
+    private bool $completeRunAfterSubmit;
 
     public function __construct()
     {
         $this->baseUrl = getenv('QASE_API_BASE_URL') ?? null;
         $this->apiToken = getenv('QASE_API_TOKEN') ?? null;
         $this->projectCode = getenv('QASE_PROJECT_CODE') ?? null;
+        $this->rootSuiteTitle = getenv('QASE_ROOT_SUITE_TITLE') ?? null;
 
         $this->runId = getenv('QASE_RUN_ID') ? (int)getenv('QASE_RUN_ID') : null;
         $this->completeRunAfterSubmit = is_null($this->runId) || getenv('QASE_COMPLETE_RUN_AFTER_SUBMIT') === '1';
@@ -68,5 +51,10 @@ class Config
     public function getCompleteRunAfterSubmit(): bool
     {
         return $this->completeRunAfterSubmit;
+    }
+
+    public function getRootSuiteTitle(): ?string
+    {
+        return $this->rootSuiteTitle;
     }
 }

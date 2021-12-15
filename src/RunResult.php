@@ -6,22 +6,10 @@ namespace Qase\PHPUnit;
 
 class RunResult
 {
-    /**
-     * @var string
-     */
-    private $projectCode;
-
-    /**
-     * @var int|null
-     */
-    private $runId;
-
-    /**
-     * @var bool
-     */
-    private $completeRunAfterSubmit;
-
-    private $results = [];
+    private string $projectCode;
+    private ?int $runId;
+    private bool $completeRunAfterSubmit;
+    private array $results = [];
 
     public function __construct(string $projectCode, ?int $runId, bool $completeRunAfterSubmit)
     {
@@ -50,8 +38,8 @@ class RunResult
         return $this->results;
     }
 
-    public function addResult(int $caseId, array $result)
+    public function addResult(array $result)
     {
-        $this->results[$caseId][] = $result;
+        $this->results[] = $result;
     }
 }
