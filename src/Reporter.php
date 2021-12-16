@@ -14,8 +14,6 @@ use Qase\Client\ApiException;
 
 class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTestFailureHook, AfterTestErrorHook, AfterLastTestHook, BeforeFirstTestHook
 {
-    public const VERSION = 'alpha';
-
     private const ROOT_SUITE_TITLE = 'PHPUnit tests';
 
     private const PASSED = 'passed';
@@ -27,11 +25,13 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     private ResultHandler $resultHandler;
     private ConsoleLogger $logger;
     private Config $config;
+    private HeaderManager $headerManager;
 
     public function __construct()
     {
         $this->logger = new ConsoleLogger();
         $this->config = new Config();
+        $this->headerManager = new HeaderManager();
 
         $this->validateConfig();
 
@@ -62,7 +62,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     {
         $this->repo->init(
             $this->config,
-            $this->getClientHeaders()
+            $this->headerManager->getClientHeaders()
         );
 
         $this->validateProjectCode();
@@ -130,23 +130,5 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
             throw $e;
         }
-    }
-
-    private function getClientHeaders(): array
-    {
-        $undefined = 'undefined';
-
-        if (is_callable('shell_exec') && false === stripos(ini_get('disable_functions'), 'shell_exec')) {
-            $composerOutput = shell_exec('composer -V');
-            preg_match('/Composer version\s(?P<version>(.+))\s/U', $composerOutput, $composerMatches);
-        }
-        $composerVersion = $composerMatches['version'] ?? $undefined;
-
-        $phpUnitVersion = class_exists('\PHPUnit\Runner\Version') ? \PHPUnit\Runner\Version::id() : $undefined;
-
-        return [
-            'X-Platform' => sprintf('php=%s; composer=%s', phpversion(), $composerVersion),
-            'X-Client' => sprintf('qase-phpunit=%s; phpunit=%s', self::VERSION, $phpUnitVersion),
-        ];
     }
 }
