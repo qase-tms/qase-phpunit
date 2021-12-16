@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Qase\PHPUnit;
 
-use PHPUnit\Util\Exception;
+use Qase\Client\ApiException;
 use Qase\Client\Model\ResultCreate;
 use Qase\Client\Model\ResultCreateBulk;
 use Qase\Client\Model\RunCreate;
@@ -22,6 +22,9 @@ class ResultHandler
         $this->repo = $repo;
     }
 
+    /**
+     * @throws ApiException
+     */
     public function handle(RunResult $runResult, string $rootSuiteTitle): void
     {
         $this->logger->writeln('', '');
@@ -94,6 +97,9 @@ class ResultHandler
         return $bulkResults;
     }
 
+    /**
+     * @throws ApiException
+     */
     private function submit(RunResult $runResult, array $bulkResults): void
     {
         $runId = $runResult->getRunId() ?: $this->createRunId($runResult->getProjectCode());
@@ -117,6 +123,9 @@ class ResultHandler
         }
     }
 
+    /**
+     * @throws ApiException
+     */
     private function createRunId($projectCode): int
     {
         $runName = 'Automated run ' . date('Y-m-d H:i:s');
@@ -136,14 +145,10 @@ class ResultHandler
 
     private function getCaseIdFromAnnotation(string $namespace, string $methodName): ?int
     {
-        try {
-            $reflection = new \ReflectionMethod($namespace, $methodName);
-        } catch (\ReflectionException $e) {
-            throw new Exception($e->getMessage(), (int)$e->getCode(), $e);
-        }
+        $reflection = new \ReflectionMethod($namespace, $methodName);
 
         $docComment = $reflection->getDocComment();
-        if (!$docComment || !preg_match_all('/\@qaseId?[ \t]+(?P<caseId>.*?)[ \t]*\r?$/m', $docComment, $qaseIdMatches)) {
+        if (!$docComment || !preg_match_all('/\@qaseId?\s+(?P<caseId>.*?)\s*\r?$/m', $docComment, $qaseIdMatches)) {
             return null;
         }
 
