@@ -41,7 +41,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
             $this->config->getCompleteRunAfterSubmit(),
         );
 
-        $this->repo = new Repository($this->runResult->getProjectCode());
+        $this->repo = new Repository();
         $this->resultHandler = new ResultHandler($this->repo, $this->logger);
     }
 

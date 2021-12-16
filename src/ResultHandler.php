@@ -61,14 +61,6 @@ class ResultHandler
 
             $caseId = $this->getCaseIdFromAnnotation($namespace, $methodName);
             if ($caseId) {
-                if (!$this->repo->caseIdExists($caseId)) {
-                    $this->logger->writeln(
-                        "{$namespace}::{$methodName} skipped due to @qaseId contains unknown Qase ID: {$caseId}",
-                    );
-
-                    continue;
-                }
-
                 $resultData['caseId'] = $caseId;
             } else {
                 $resultData['case'] = [
