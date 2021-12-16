@@ -55,14 +55,14 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
         }
     }
 
+    /**
+     * @throws ApiException
+     */
     public function executeBeforeFirstTest(): void
     {
         $this->repo->init(
             $this->config,
-            [
-                'X-Platform' => sprintf('php=%s', phpversion()),
-                'X-Client' => sprintf('qase-phpunit=%s', self::VERSION),
-            ]
+            $this->getClientHeaders()
         );
 
         $this->validateProjectCode();
@@ -114,6 +114,9 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
         }
     }
 
+    /**
+     * @throws ApiException
+     */
     private function validateProjectCode(): void
     {
         try {
@@ -127,5 +130,23 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
             throw $e;
         }
+    }
+
+    private function getClientHeaders(): array
+    {
+        $undefined = 'undefined';
+
+        if (is_callable('shell_exec') && false === stripos(ini_get('disable_functions'), 'shell_exec')) {
+            $composerOutput = shell_exec('composer -V');
+            preg_match('/Composer version\s(?P<version>(.+))\s/U', $composerOutput, $composerMatches);
+        }
+        $composerVersion = $composerMatches['version'] ?? $undefined;
+
+        $phpUnitVersion = class_exists('\PHPUnit\Runner\Version') ? \PHPUnit\Runner\Version::id() : $undefined;
+
+        return [
+            'X-Platform' => sprintf('php=%s; composer=%s', phpversion(), $composerVersion),
+            'X-Client' => sprintf('qase-phpunit=%s; phpunit=%s', self::VERSION, $phpUnitVersion),
+        ];
     }
 }
