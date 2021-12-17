@@ -1,19 +1,47 @@
 {
   "name": "qase/phpunit-reporter",
-  "description": "Qase TMS PHPUnit reporter",
+  "description": "Qase TMS PHPUnit reporter.",
   "homepage": "https://developers.qase.io",
+  "version": "1.0.0",
   "type": "library",
   "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Kamil Samigullin",
+      "email": "kamil@samigullin.info"
+    },
+    {
+      "name": "Sergey Skaridov",
+      "email": "s.skaridov@gmail.com"
+    }
+  ],
+  "keywords": [
+    "qase",
+    "tms",
+    "reporter",
+    "php",
+    "phpunit"
+  ],
+  "require": {
+    "php": "^7.4 || ^8.0",
+    "ext-json": "*",
+    "qase/api": "dev-main",
+    "phpunit/phpunit": "^8.0 || ^9.0"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.12"
+  },
   "autoload": {
     "psr-4": {
       "Qase\\PHPUnit\\": "src/"
     }
   },
-  "require": {
-    "php": "^7.4 || ^8.0",
-    "qase/api": "dev-main",
-    "phpunit/phpunit": "^8.0 || ^9.0",
-    "salsify/json-streaming-parser": "^8.2"
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
   },
-  "minimum-stability": "dev"
+  "scripts": {
+    "test": "phpunit"
+  }
 }
