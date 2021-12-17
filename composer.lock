@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "97004e2d5a1f174ad3bd22dd699da02a",
+    "content-hash": "076a7940543a8778b1ad910a19e1fe46",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -1433,16 +1433,16 @@
         },
         {
             "name": "qase/api",
-            "version": "dev-main",
+            "version": "1.0.0-alpha.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/qase-tms/qase-php-client.git",
-                "reference": "ee86b5394f6bd69d4163d34190190e825a634468"
+                "reference": "20c0dcd39a4ccd6114a7936178fe6cc06057d414"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/qase-tms/qase-php-client/zipball/ee86b5394f6bd69d4163d34190190e825a634468",
-                "reference": "ee86b5394f6bd69d4163d34190190e825a634468",
+                "url": "https://api.github.com/repos/qase-tms/qase-php-client/zipball/20c0dcd39a4ccd6114a7936178fe6cc06057d414",
+                "reference": "20c0dcd39a4ccd6114a7936178fe6cc06057d414",
                 "shasum": ""
             },
             "require": {
@@ -1457,7 +1457,6 @@
                 "friendsofphp/php-cs-fixer": "^2.12",
                 "phpunit/phpunit": "^8.0 || ^9.0"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -1492,9 +1491,9 @@
             ],
             "support": {
                 "issues": "https://github.com/qase-tms/qase-php-client/issues",
-                "source": "https://github.com/qase-tms/qase-php-client/tree/main"
+                "source": "https://github.com/qase-tms/qase-php-client/tree/v1.0.0-alpha.1"
             },
-            "time": "2021-12-17T06:15:20+00:00"
+            "time": "2021-12-17T09:03:17+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -4801,7 +4800,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "qase/api": 20
+        "qase/api": 15
     },
     "prefer-stable": false,
     "prefer-lowest": false,

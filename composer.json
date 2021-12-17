@@ -2,7 +2,6 @@
   "name": "qase/phpunit-reporter",
   "description": "Qase TMS PHPUnit reporter.",
   "homepage": "https://developers.qase.io",
-  "version": "1.0.0",
   "type": "library",
   "license": "Apache-2.0",
   "authors": [
@@ -25,8 +24,8 @@
   "require": {
     "php": "^7.4 || ^8.0",
     "ext-json": "*",
-    "qase/api": "dev-main",
-    "phpunit/phpunit": "^8.0 || ^9.0"
+    "phpunit/phpunit": "^8.0 || ^9.0",
+    "qase/api": "v1.0.0-alpha.1"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.12"
