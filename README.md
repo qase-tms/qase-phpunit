@@ -48,7 +48,7 @@ Allow submitting results in bulk
 To run tests and create a test run, execute the command:
 
 ```bash
-$ ./vendor/bin/phpunit 
+$ ./vendor/bin/phpunit
 ```
 
 ![Output of run](example/screenshots/screenshot.png)
@@ -76,7 +76,7 @@ Reporter options (* - required):
   as example, for `https://app.qase.io/project/DEMO` -> `DEMO` is project code here.
 - `QASE_API_BASE_URL` - URL endpoint API from Qase TMS, default is `https://api.qase.io/v1`.
 - `QASE_RUN_ID` - allows you to use an existing test run instead of creating new.
-- `QASE_COMPLETE_RUN_AFTER_SUBMIT` - performs the "complete" function after passing the test run.
+- `QASE_RUN_COMPLETE` - performs the "complete" function after passing the test run.
 
 The configuration file should be called `phpunit.xml`, an example of such a file:
 
@@ -95,7 +95,7 @@ The configuration file should be called `phpunit.xml`, an example of such a file
     <env name="QASE_PROJECT_CODE" value="project_code"/>
     <env name="QASE_API_BASE_URL" value="https://api.qase.io/v1"/>
     <env name="QASE_API_TOKEN" value="api_key"/>
-    <env name="QASE_COMPLETE_RUN_AFTER_SUBMIT" value="1"/>
+    <env name="QASE_RUN_COMPLETE" value="1"/>
     <env name="QASE_RUN_ID"/>
   </php>
 </phpunit>
