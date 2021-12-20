@@ -35,8 +35,12 @@ You should also have an active item in the project settings at
 https://app.qase.io/project/QASE_PROJECT_CODE/settings/options
 ```
 
-option in the `Test Runs` block:
+options in the `Test Runs` block:
 
+```
+Auto create test cases
+```
+and
 ```
 Allow submitting results in bulk
 ```
