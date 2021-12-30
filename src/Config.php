@@ -10,6 +10,7 @@ class Config
         'QASE_API_TOKEN',
     ];
 
+    private bool $isReportingEnabled;
     private ?string $projectCode;
     private ?string $baseUrl;
     private ?string $apiToken;
@@ -19,6 +20,8 @@ class Config
 
     public function __construct()
     {
+        $this->isReportingEnabled = getenv('QASE_REPORT') === '1';
+
         $this->baseUrl = getenv('QASE_API_BASE_URL') ?? null;
         $this->apiToken = getenv('QASE_API_TOKEN') ?? null;
         $this->projectCode = getenv('QASE_PROJECT_CODE') ?? null;
@@ -26,6 +29,11 @@ class Config
 
         $this->runId = getenv('QASE_RUN_ID') ? (int)getenv('QASE_RUN_ID') : null;
         $this->completeRunAfterSubmit = is_null($this->runId) || getenv('QASE_RUN_COMPLETE') === '1';
+    }
+
+    public function isReportingEnabled(): bool
+    {
+        return $this->isReportingEnabled;
     }
 
     public function getProjectCode(): ?string
