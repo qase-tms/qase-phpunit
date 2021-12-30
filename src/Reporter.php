@@ -31,6 +31,12 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     {
         $this->logger = new ConsoleLogger();
         $this->config = new Config();
+
+        if (!$this->config->isReportingEnabled()) {
+            $this->logger->writeln('Reporting to Qase.io is disabled. Set the environment variable QASE_REPORT=1 to enable it.');
+            return;
+        }
+
         $this->headerManager = new HeaderManager();
 
         $this->validateConfig();
@@ -60,6 +66,10 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
      */
     public function executeBeforeFirstTest(): void
     {
+        if (!$this->config->isReportingEnabled()) {
+            return;
+        }
+
         $this->repo->init(
             $this->config,
             $this->headerManager->getClientHeaders()
@@ -90,6 +100,10 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
     private function accumulateTestResult(string $status, string $test, float $time, string $message = null): void
     {
+        if (!$this->config->isReportingEnabled()) {
+            return;
+        }
+
         $this->runResult->addResult([
             'status' => $status,
             'time' => $time,
@@ -98,9 +112,12 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
         ]);
     }
 
-
     public function executeAfterLastTest(): void
     {
+        if (!$this->config->isReportingEnabled()) {
+            return;
+        }
+
         try {
             $this->resultHandler->handle(
                 $this->runResult,
