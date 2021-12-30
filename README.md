@@ -68,7 +68,7 @@ PHPUnit reporter also allows you to perform parameterization of the test case. T
     {
         $this->assertSame($expected, $a + $b);
     }
-    
+
     public function additionProvider()
     {
         return [
@@ -93,6 +93,7 @@ Add to your `phpunit.xml` extension:
 
 Reporter options (* - required):
 
+- `QASE_REPORT` - toggles sending reports to Qase.io, set `1` to enable
 - *`QASE_API_TOKEN` - access token, you can find more information [here][auth].
 - *`QASE_PROJECT_CODE` - code of your project (can be extracted from main page of your project,
   as example, for `https://app.qase.io/project/DEMO` -> `DEMO` is project code here.
@@ -114,6 +115,7 @@ The configuration file should be called `phpunit.xml`, an example of such a file
     </testsuite>
   </testsuites>
   <php>
+    <env name="QASE_REPORT" value="1"/>
     <env name="QASE_PROJECT_CODE" value="project_code"/>
     <env name="QASE_API_BASE_URL" value="https://api.qase.io/v1"/>
     <env name="QASE_API_TOKEN" value="api_key"/>
