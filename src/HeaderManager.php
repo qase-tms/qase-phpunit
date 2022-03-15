@@ -20,7 +20,9 @@ class HeaderManager
             return;
         }
 
-        $this->composerPackages = array_column($composerLock['packages'] ?? [], 'version', 'name');
+        $packages = array_column($composerLock['packages'] ?? [], 'version', 'name');
+        $packagesDev = array_column($composerLock['packages-dev'] ?? [], 'version', 'name');
+        $this->composerPackages = array_merge($packages, $packagesDev);
     }
 
     public function getClientHeaders(): array
@@ -43,12 +45,12 @@ class HeaderManager
                 'arch' => php_uname('m'),
                 'php' => phpversion(),
                 'composer' => $composerVersion,
-            ], '', '; '),
+            ], '', ';'),
             'X-Client' => http_build_query([
                 'qaseapi' => $apiClientVersion,
                 'qase-phpunit' => $reporterVersion,
                 'phpunit' => $phpUnitVersion,
-            ], '', '; '),
+            ], '', ';'),
         ];
     }
 }
