@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Qase\PHPUnit;
 
 class Config
@@ -22,10 +24,10 @@ class Config
     {
         $this->isReportingEnabled = getenv('QASE_REPORT') === '1';
 
-        $this->baseUrl = getenv('QASE_API_BASE_URL') ?? null;
-        $this->apiToken = getenv('QASE_API_TOKEN') ?? null;
-        $this->projectCode = getenv('QASE_PROJECT_CODE') ?? null;
-        $this->rootSuiteTitle = getenv('QASE_ROOT_SUITE_TITLE') ?? null;
+        $this->baseUrl = getenv('QASE_API_BASE_URL') ?: null;
+        $this->apiToken = getenv('QASE_API_TOKEN') ?: null;
+        $this->projectCode = getenv('QASE_PROJECT_CODE') ?: null;
+        $this->rootSuiteTitle = getenv('QASE_ROOT_SUITE_TITLE') ?: null;
 
         $this->runId = getenv('QASE_RUN_ID') ? (int)getenv('QASE_RUN_ID') : null;
         $this->completeRunAfterSubmit = is_null($this->runId) || getenv('QASE_RUN_COMPLETE') === '1';

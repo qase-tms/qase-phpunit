@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Qase\PHPUnit;
 
 use Qase\Client\Model\ResultCreate;
@@ -13,49 +15,6 @@ class ResultsConverter
     public function __construct(ConsoleLogger $logger)
     {
         $this->logger = $logger;
-    }
-
-    private function getCaseIdFromAnnotation(string $namespace, string $methodName): ?int
-    {
-        $reflection = new \ReflectionMethod($namespace, $methodName);
-
-        $docComment = $reflection->getDocComment();
-        if (!$docComment || !preg_match_all('/\@qaseId?\s+(?P<caseId>.*?)\s*\r?$/m', $docComment, $qaseIdMatches)) {
-            return null;
-        }
-
-        if (!($qaseIdMatches['caseId'][0] ?? false)) {
-            return null;
-        }
-
-        return (int)$qaseIdMatches['caseId'][0] ?: null;
-    }
-
-    private function explodeFullTestName($fullTestName): array
-    {
-        if (!preg_match_all('/(?P<namespace>.+)::(?P<methodName>\w+)/', $fullTestName, $testNameMatches)) {
-            $this->logger->writeln("WARNING: Could not parse test name '{$fullTestName}'");
-            throw new \RuntimeException('Could not parse test name');
-        }
-
-        return [$testNameMatches['namespace'][0], $testNameMatches['methodName'][0]];
-    }
-
-    /**
-     * @param string $title
-     * @param array[string] $prefixes
-     * @return string
-     */
-    private function clearPrefix(string $title, array $prefixes): string
-    {
-        foreach ($prefixes as $prefix) {
-            $prefixLength = mb_strlen($prefix);
-            if (strncmp($title, $prefix, $prefixLength) === 0) {
-                return mb_substr($title, $prefixLength);
-            }
-        }
-
-        return $title;
     }
 
     public function prepareBulkResults(RunResult $runResult, string $rootSuiteTitle): array
@@ -105,5 +64,48 @@ class ResultsConverter
         }
 
         return $bulkResults;
+    }
+
+    private function getCaseIdFromAnnotation(string $namespace, string $methodName): ?int
+    {
+        $reflection = new \ReflectionMethod($namespace, $methodName);
+
+        $docComment = $reflection->getDocComment();
+        if (!$docComment || !preg_match_all('/\@qaseId?\s+(?P<caseId>.*?)\s*\r?$/m', $docComment, $qaseIdMatches)) {
+            return null;
+        }
+
+        if (!($qaseIdMatches['caseId'][0] ?? false)) {
+            return null;
+        }
+
+        return (int)$qaseIdMatches['caseId'][0] ?: null;
+    }
+
+    private function explodeFullTestName($fullTestName): array
+    {
+        if (!preg_match_all('/(?P<namespace>.+)::(?P<methodName>\w+)/', $fullTestName, $testNameMatches)) {
+            $this->logger->writeln("WARNING: Could not parse test name '{$fullTestName}'");
+            throw new \RuntimeException('Could not parse test name');
+        }
+
+        return [$testNameMatches['namespace'][0], $testNameMatches['methodName'][0]];
+    }
+
+    /**
+     * @param string $title
+     * @param array[string] $prefixes
+     * @return string
+     */
+    private function clearPrefix(string $title, array $prefixes): string
+    {
+        foreach ($prefixes as $prefix) {
+            $prefixLength = mb_strlen($prefix);
+            if (strncmp($title, $prefix, $prefixLength) === 0) {
+                return mb_substr($title, $prefixLength);
+            }
+        }
+
+        return $title;
     }
 }
