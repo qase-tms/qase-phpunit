@@ -41,11 +41,13 @@ class Repository
         return $this->resultsApi;
     }
 
-    public function init(Config $config, array $headers)
+    public function init(Config $config, array $headers, \GuzzleHttp\Client $client = null)
     {
-        $client = new \GuzzleHttp\Client([
-            'headers' => $headers,
-        ]);
+        if($client === null) {
+            $client = new \GuzzleHttp\Client([
+                'headers' => $headers,
+            ]);
+        }
 
         $config = Configuration::getDefaultConfiguration()
             ->setHost($config->getBaseUrl())

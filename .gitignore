@@ -3,3 +3,4 @@
 
 # code coverage and quality reports
 .phpunit.result.cache
+.phpunit.cache/

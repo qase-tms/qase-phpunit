@@ -31,6 +31,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     {
         $this->logger = new ConsoleLogger();
         $this->config = new Config();
+        $resultsConverter = new ResultsConverter($this->logger);
 
         if (!$this->config->isReportingEnabled()) {
             $this->logger->writeln('Reporting to Qase.io is disabled. Set the environment variable QASE_REPORT=1 to enable it.');
@@ -48,7 +49,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
         );
 
         $this->repo = new Repository();
-        $this->resultHandler = new ResultHandler($this->repo, $this->logger);
+        $this->resultHandler = new ResultHandler($this->repo, $resultsConverter, $this->logger);
     }
 
     private function validateConfig(): void
