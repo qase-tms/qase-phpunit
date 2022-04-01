@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "65a35fb4a856e95394a46c7a0819f501",
+    "content-hash": "ccb68f6305a6ebef105f0f821fe1c923",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -1435,16 +1435,16 @@
         },
         {
             "name": "qase/api",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/qase-tms/qase-php-client.git",
-                "reference": "691dfcbcb20429d339d1c611b5e22dfd045ba2da"
+                "reference": "5503d78d8fdbfb8d1c788f042bbd391298bf96cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/qase-tms/qase-php-client/zipball/691dfcbcb20429d339d1c611b5e22dfd045ba2da",
-                "reference": "691dfcbcb20429d339d1c611b5e22dfd045ba2da",
+                "url": "https://api.github.com/repos/qase-tms/qase-php-client/zipball/5503d78d8fdbfb8d1c788f042bbd391298bf96cb",
+                "reference": "5503d78d8fdbfb8d1c788f042bbd391298bf96cb",
                 "shasum": ""
             },
             "require": {
@@ -1498,9 +1498,9 @@
             ],
             "support": {
                 "issues": "https://github.com/qase-tms/qase-php-client/issues",
-                "source": "https://github.com/qase-tms/qase-php-client/tree/v1.0.0"
+                "source": "https://github.com/qase-tms/qase-php-client/tree/v1.0.1"
             },
-            "time": "2022-03-31T14:24:48+00:00"
+            "time": "2022-04-01T08:17:39+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
