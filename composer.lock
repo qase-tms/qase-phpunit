@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ccb68f6305a6ebef105f0f821fe1c923",
+    "content-hash": "a21cfcc098b7d05c9042154c48452523",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -1501,6 +1501,36 @@
                 "source": "https://github.com/qase-tms/qase-php-client/tree/v1.0.1"
             },
             "time": "2022-04-01T08:17:39+00:00"
+        },
+        {
+            "name": "qase/php-client-utils",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/qase-tms/qase-php-client-utils.git",
+                "reference": "005a0bb78ba32b0dcf21d07aed24489ac4cfdd52"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/qase-tms/qase-php-client-utils/zipball/005a0bb78ba32b0dcf21d07aed24489ac4cfdd52",
+                "reference": "005a0bb78ba32b0dcf21d07aed24489ac4cfdd52",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Qase\\PhpClientUtils\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "support": {
+                "issues": "https://github.com/qase-tms/qase-php-client-utils/issues",
+                "source": "https://github.com/qase-tms/qase-php-client-utils/tree/v1.0.0"
+            },
+            "time": "2022-05-19T17:04:27+00:00"
         },
         {
             "name": "ralouphie/getallheaders",

@@ -25,7 +25,8 @@
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "phpunit/phpunit": "^8.0 || ^9.0",
-        "qase/api": "v1.0.1"
+        "qase/api": "v1.0.1",
+        "qase/php-client-utils": "^1.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.4",

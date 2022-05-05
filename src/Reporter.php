@@ -11,6 +11,12 @@ use PHPUnit\Runner\AfterTestErrorHook;
 use PHPUnit\Runner\AfterTestFailureHook;
 use PHPUnit\Runner\BeforeFirstTestHook;
 use Qase\Client\ApiException;
+use Qase\PhpClientUtils\Config;
+use Qase\PhpClientUtils\ConsoleLogger;
+use Qase\PhpClientUtils\Repository;
+use Qase\PhpClientUtils\ResultHandler;
+use Qase\PhpClientUtils\RunResult;
+use Qase\PhpClientUtils\ResultsConverter;
 
 class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTestFailureHook, AfterTestErrorHook, AfterLastTestHook, BeforeFirstTestHook
 {
@@ -40,7 +46,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
         $this->headerManager = new HeaderManager();
 
-        $this->validateConfig();
+        $this->config->validate();
 
         $this->runResult = new RunResult(
             $this->config->getProjectCode(),
@@ -50,16 +56,6 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
         $this->repo = new Repository();
         $this->resultHandler = new ResultHandler($this->repo, $resultsConverter, $this->logger);
-    }
-
-    private function validateConfig(): void
-    {
-        if (!$this->config->getBaseUrl() || !$this->config->getApiToken() || !$this->config->getProjectCode()) {
-            throw new \LogicException(sprintf(
-                'The Qase PHPUnit reporter needs the following environment variables to be set: %s.',
-                implode(',', Config::REQUIRED_PARAMS)
-            ));
-        }
     }
 
     /**
