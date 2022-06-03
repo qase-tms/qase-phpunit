@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a21cfcc098b7d05c9042154c48452523",
+    "content-hash": "463e1e04bbc15e88bf1645a29c309e13",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -1435,16 +1435,16 @@
         },
         {
             "name": "qase/api",
-            "version": "v1.0.1",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/qase-tms/qase-php-client.git",
-                "reference": "5503d78d8fdbfb8d1c788f042bbd391298bf96cb"
+                "reference": "ea23eb163444f494c648b9928de059c0b1f62e24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/qase-tms/qase-php-client/zipball/5503d78d8fdbfb8d1c788f042bbd391298bf96cb",
-                "reference": "5503d78d8fdbfb8d1c788f042bbd391298bf96cb",
+                "url": "https://api.github.com/repos/qase-tms/qase-php-client/zipball/ea23eb163444f494c648b9928de059c0b1f62e24",
+                "reference": "ea23eb163444f494c648b9928de059c0b1f62e24",
                 "shasum": ""
             },
             "require": {
@@ -1456,7 +1456,7 @@
                 "php": "^7.4 || ^8.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.4",
+                "friendsofphp/php-cs-fixer": "^3.5",
                 "phpstan/phpstan": "^1.3",
                 "phpunit/phpunit": "^8.0 || ^9.0",
                 "roave/security-advisories": "dev-latest",
@@ -1498,9 +1498,9 @@
             ],
             "support": {
                 "issues": "https://github.com/qase-tms/qase-php-client/issues",
-                "source": "https://github.com/qase-tms/qase-php-client/tree/v1.0.1"
+                "source": "https://github.com/qase-tms/qase-php-client/tree/v1.2.0"
             },
-            "time": "2022-04-01T08:17:39+00:00"
+            "time": "2022-06-03T05:24:24+00:00"
         },
         {
             "name": "qase/php-client-utils",
