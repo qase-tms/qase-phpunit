@@ -74,9 +74,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
         );
 
         $this->validateProjectCode();
-        if ($this->config->getEnvironmentId() !== null) {
-            $this->validateEnvironmentId();
-        }
+        $this->validateEnvironmentId();
     }
 
     public function executeAfterSkippedTest(string $test, string $message, float $time): void
@@ -155,16 +153,19 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
      */
     private function validateEnvironmentId(): void
     {
-        try {
-            $this->logger->write("checking if Environment Id '{$this->config->getEnvironmentId()}' exists... ");
+        if ($this->config->getEnvironmentId() !== null) {
+            try {
 
-            $this->repo->getEnvironmentsApi()->getEnvironment($this->runResult->getProjectCode(), $this->config->getEnvironmentId());
+                $this->logger->write("checking if Environment Id '{$this->config->getEnvironmentId()}' exists... ");
 
-            $this->logger->writeln('OK', '');
-        } catch (ApiException $e) {
-            $this->logger->writeln("could not find Environment Id '{$this->config->getEnvironmentId()}'");
+                $this->repo->getEnvironmentsApi()->getEnvironment($this->runResult->getProjectCode(), $this->config->getEnvironmentId());
 
-            throw $e;
+                $this->logger->writeln('OK', '');
+            } catch (ApiException $e) {
+                $this->logger->writeln("could not find Environment Id '{$this->config->getEnvironmentId()}'");
+
+                throw $e;
+            }
         }
     }
 }
