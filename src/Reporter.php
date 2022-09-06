@@ -52,6 +52,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
             $this->config->getProjectCode(),
             $this->config->getRunId(),
             $this->config->getCompleteRunAfterSubmit(),
+            $this->config->getEnvironmentId(),
         );
 
         $this->repo = new Repository();
@@ -73,6 +74,9 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
         );
 
         $this->validateProjectCode();
+        if ($this->config->getEnvironmentId() !== null) {
+            $this->validateEnvironmentId();
+        }
     }
 
     public function executeAfterSkippedTest(string $test, string $message, float $time): void
@@ -141,6 +145,24 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
             $this->logger->writeln('OK', '');
         } catch (ApiException $e) {
             $this->logger->writeln("could not find project '{$this->runResult->getProjectCode()}'");
+
+            throw $e;
+        }
+    }
+
+    /**
+     * @throws ApiException
+     */
+    private function validateEnvironmentId(): void
+    {
+        try {
+            $this->logger->write("checking if Environment Id '{$this->config->getEnvironmentId()}' exists... ");
+
+            $this->repo->getEnvironmentsApi()->getEnvironment($this->runResult->getProjectCode(), $this->config->getEnvironmentId());
+
+            $this->logger->writeln('OK', '');
+        } catch (ApiException $e) {
+            $this->logger->writeln("could not find Environment Id '{$this->config->getEnvironmentId()}'");
 
             throw $e;
         }
