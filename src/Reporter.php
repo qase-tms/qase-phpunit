@@ -153,7 +153,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
      */
     private function validateEnvironmentId(): void
     {
-        if ($this->config->getEnvironmentId() !== null) {
+        if ($this->config->getEnvironmentId() === null) {
             return;
         }
 
