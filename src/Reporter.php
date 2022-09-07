@@ -154,18 +154,19 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     private function validateEnvironmentId(): void
     {
         if ($this->config->getEnvironmentId() !== null) {
-            try {
+            return;
+        }
 
-                $this->logger->write("checking if Environment Id '{$this->config->getEnvironmentId()}' exists... ");
+        try {
+            $this->logger->write("checking if Environment Id '{$this->config->getEnvironmentId()}' exists... ");
 
-                $this->repo->getEnvironmentsApi()->getEnvironment($this->runResult->getProjectCode(), $this->config->getEnvironmentId());
+            $this->repo->getEnvironmentsApi()->getEnvironment($this->runResult->getProjectCode(), $this->config->getEnvironmentId());
 
-                $this->logger->writeln('OK', '');
-            } catch (ApiException $e) {
-                $this->logger->writeln("could not find Environment Id '{$this->config->getEnvironmentId()}'");
+            $this->logger->writeln('OK', '');
+        } catch (ApiException $e) {
+            $this->logger->writeln("could not find Environment Id '{$this->config->getEnvironmentId()}'");
 
-                throw $e;
-            }
+            throw $e;
         }
     }
 }
