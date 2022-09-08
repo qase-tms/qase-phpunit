@@ -5,7 +5,7 @@
   </extensions>
   <testsuites>
     <testsuite name="qase-phpunit">
-      <directory>./tests</directory>
+      <file>EmailTest.php</file>
     </testsuite>
   </testsuites>
   <php>

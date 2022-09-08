@@ -1,0 +1,10 @@
+{
+    "require": {
+        "qase/phpunit-reporter": "^1.1.1"
+    },
+    "autoload": {
+        "files": [
+            "Email.php"
+        ]
+    }
+}
