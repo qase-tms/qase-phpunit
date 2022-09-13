@@ -35,8 +35,8 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
     public function __construct()
     {
-        $this->logger = new ConsoleLogger();
         $this->config = new Config();
+        $this->logger = new ConsoleLogger($this->config);
         $resultsConverter = new ResultsConverter($this->logger);
 
         if (!$this->config->isReportingEnabled()) {
