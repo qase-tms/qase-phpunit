@@ -57,6 +57,9 @@ A test run will be performed and available at:
 ```
 https://app.qase.io/run/QASE_PROJECT_CODE
 ```
+
+If test fails, a defect will be automatically created
+
 ## Using parameterization
 
 PHPUnit reporter also allows you to perform parameterization of the test case. To do this, you need to specify a dataprovider. Example:

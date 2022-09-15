@@ -108,6 +108,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
             'time' => $time,
             'full_test_name' => $test,
             'stacktrace' => $status === self::FAILED ? $message : null,
+            'defect' => $status === self::FAILED,
         ]);
     }
 
