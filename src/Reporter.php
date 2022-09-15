@@ -12,7 +12,9 @@ use PHPUnit\Runner\AfterTestFailureHook;
 use PHPUnit\Runner\BeforeFirstTestHook;
 use Qase\Client\ApiException;
 use Qase\PhpClientUtils\Config;
+use Qase\PhpClientUtils\LoggerInterface;
 use Qase\PhpClientUtils\ConsoleLogger;
+use Qase\PhpClientUtils\NullLogger;
 use Qase\PhpClientUtils\Repository;
 use Qase\PhpClientUtils\ResultHandler;
 use Qase\PhpClientUtils\RunResult;
@@ -29,14 +31,18 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     private RunResult $runResult;
     private Repository $repo;
     private ResultHandler $resultHandler;
-    private ConsoleLogger $logger;
+    private LoggerInterface $logger;
     private Config $config;
     private HeaderManager $headerManager;
 
     public function __construct()
     {
-        $this->logger = new ConsoleLogger();
         $this->config = new Config();
+        if ($this->config->isLoggingEnabled()) {
+            $this->logger = new ConsoleLogger();
+        } else {
+            $this->logger = new NullLogger();
+        }
         $resultsConverter = new ResultsConverter($this->logger);
 
         if (!$this->config->isReportingEnabled()) {

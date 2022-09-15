@@ -15,5 +15,6 @@
     <env name="QASE_API_TOKEN" value="api_key" force="true" />
     <env name="QASE_ENVIRONMENT_ID" value="1" force="true" />
     <env name="QASE_RUN_COMPLETE" value="1" force="true" />
+    <env name="QASE_LOGGING" value="1"/>
   </php>
 </phpunit>
