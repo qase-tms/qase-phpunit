@@ -26,7 +26,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
     private const PASSED = 'passed';
     private const SKIPPED = 'skipped';
-    private const FAILED = 'failed';
+    public const FAILED = 'failed';
 
     private RunResult $runResult;
     private Repository $repo;
@@ -34,6 +34,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     private LoggerInterface $logger;
     private Config $config;
     private HeaderManager $headerManager;
+    private ResultAccumulator $resultAccumulator;
 
     public function __construct()
     {
@@ -61,6 +62,8 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
             $this->config->getEnvironmentId(),
         );
 
+        $this->resultAccumulator = new ResultAccumulator($this->runResult, $this->config->isReportingEnabled());
+
         $this->repo = new Repository();
         $this->resultHandler = new ResultHandler($this->repo, $resultsConverter, $this->logger);
     }
@@ -85,37 +88,22 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
     public function executeAfterSkippedTest(string $test, string $message, float $time): void
     {
-        $this->accumulateTestResult(self::SKIPPED, $test, $time, $message);
+        $this->resultAccumulator->accumulate(self::SKIPPED, $test, $time, $message);
     }
 
     public function executeAfterSuccessfulTest(string $test, float $time): void
     {
-        $this->accumulateTestResult(self::PASSED, $test, $time);
+        $this->resultAccumulator->accumulate(self::PASSED, $test, $time);
     }
 
     public function executeAfterTestFailure(string $test, string $message, float $time): void
     {
-        $this->accumulateTestResult(self::FAILED, $test, $time, $message);
+        $this->resultAccumulator->accumulate(self::FAILED, $test, $time, $message);
     }
 
     public function executeAfterTestError(string $test, string $message, float $time): void
     {
-        $this->accumulateTestResult(self::FAILED, $test, $time, $message);
-    }
-
-    private function accumulateTestResult(string $status, string $test, float $time, string $message = null): void
-    {
-        if (!$this->config->isReportingEnabled()) {
-            return;
-        }
-
-        $this->runResult->addResult([
-            'status' => $status,
-            'time' => $time,
-            'full_test_name' => $test,
-            'stacktrace' => $status === self::FAILED ? $message : null,
-            'defect' => $status === self::FAILED,
-        ]);
+        $this->resultAccumulator->accumulate(self::FAILED, $test, $time, $message);
     }
 
     public function executeAfterLastTest(): void
