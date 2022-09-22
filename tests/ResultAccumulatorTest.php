@@ -15,12 +15,20 @@ class ResultAccumulatorTest extends TestCase
      */
     public function testAutoCreateDefect(string $title, string $status, float $time, bool $expected)
     {
-        $runResult = new RunResult('PRJ', null, true, null);
+        $runResult = $this->getMockBuilder(RunResult::class)->setConstructorArgs(['PRJ', null, true])->getMock();
+
+        $runResult->expects($this->once())
+            ->method('addResult')
+            ->with($this->equalTo([
+                'status' => $status,
+                'time' => $time,
+                'full_test_name' => $title,
+                'stacktrace' => null,
+                'defect' => $expected,
+            ]));
 
         $resultAccumulator = new ResultAccumulator($runResult, true);
         $resultAccumulator->accumulate($status, $title, $time);
-
-        $this->assertEquals($runResult->getResults()[0]['defect'], $expected);
     }
 
     function accumulateDataProvider(): array
