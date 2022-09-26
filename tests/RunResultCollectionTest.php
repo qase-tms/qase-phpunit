@@ -26,8 +26,8 @@ class RunResultCollectionTest extends TestCase
                 })
             );
 
-        $RunResultCollection = new RunResultCollection($runResult, true);
-        $RunResultCollection->add($status, $title, $time);
+        $runResultCollection = new RunResultCollection($runResult, true);
+        $runResultCollection->add($status, $title, $time);
     }
 
     function autoCreateDefectDataProvider(): array
@@ -44,21 +44,21 @@ class RunResultCollectionTest extends TestCase
     public function testGetReturnsRunResultObject()
     {
         $runResult = new RunResult('PRJ', 1, true, null);
-        $RunResultCollection = new RunResultCollection($runResult, true);
-        $this->assertInstanceOf(RunResult::class, $RunResultCollection->get());
+        $runResultCollection = new RunResultCollection($runResult, true);
+        $this->assertInstanceOf(RunResult::class, $runResultCollection->get());
     }
 
     public function testAddCorrectlyAddsResult()
     {
         $runResult = new RunResult('PRJ', 1, true, null);
-        $RunResultCollection = new RunResultCollection($runResult, true);
-        $runResult1 = $RunResultCollection->get();
+        $runResultCollection = new RunResultCollection($runResult, true);
+        $runResult1 = $runResultCollection->get();
         $this->assertEmpty($runResult1->getResults());
 
-        $RunResultCollection->add('failed', 'Test 6', 1, 'Testing message');
-        $RunResultCollection->add('passed', 'Test 7', 0.375);
+        $runResultCollection->add('failed', 'Test 6', 1, 'Testing message');
+        $runResultCollection->add('passed', 'Test 7', 0.375);
 
-        $runResult2 = $RunResultCollection->get();
+        $runResult2 = $runResultCollection->get();
 
         $expectedResult = [
             [
