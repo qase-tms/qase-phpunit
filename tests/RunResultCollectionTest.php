@@ -30,7 +30,7 @@ class RunResultCollectionTest extends TestCase
         $runResultCollection->add($status, $title, $time);
     }
 
-    function autoCreateDefectDataProvider(): array
+    public function autoCreateDefectDataProvider(): array
     {
         return [
             ['Test (Qase ID: 1)', 'failed', 1, true],
@@ -66,8 +66,9 @@ class RunResultCollectionTest extends TestCase
         $runResultWithoutResults = $runResultCollection->get();
         $this->assertEmpty($runResultWithoutResults->getResults());
 
-        $runResultCollection->add('failed', 'Test 6', 1, 'Testing message');
-        $runResultCollection->add('passed', 'Test 7', 0.375);
+        $stackTraceMessage = 'Stack trace text';
+        $runResultCollection->add('failed', 'Test 7', 1, $stackTraceMessage);
+        $runResultCollection->add('passed', 'Test 8', 0.375);
 
         $runResultWithResults = $runResultCollection->get();
 
@@ -75,14 +76,14 @@ class RunResultCollectionTest extends TestCase
             [
                 'status' => 'failed',
                 'time' => 1.0,
-                'full_test_name' => 'Test 6',
-                'stacktrace' => 'Testing message',
+                'full_test_name' => 'Test 7',
+                'stacktrace' => $stackTraceMessage,
                 'defect' => true,
             ],
             [
                 'status' => 'passed',
                 'time' => 0.375,
-                'full_test_name' => 'Test 7',
+                'full_test_name' => 'Test 8',
                 'stacktrace' => null,
                 'defect' => false,
             ],
