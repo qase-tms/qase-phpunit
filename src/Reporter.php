@@ -28,7 +28,6 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     private const SKIPPED = 'skipped';
     public const FAILED = 'failed';
 
-    private RunResult $runResult;
     private Repository $repo;
     private ResultHandler $resultHandler;
     private LoggerInterface $logger;
@@ -55,14 +54,14 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
         $this->config->validate();
 
-        $this->runResult = new RunResult(
+        $runResult = new RunResult(
             $this->config->getProjectCode(),
             $this->config->getRunId(),
             $this->config->getCompleteRunAfterSubmit(),
             $this->config->getEnvironmentId(),
         );
 
-        $this->resultAccumulator = new ResultAccumulator($this->runResult, $this->config->isReportingEnabled());
+        $this->resultAccumulator = new ResultAccumulator($runResult, $this->config->isReportingEnabled());
 
         $this->repo = new Repository();
         $this->resultHandler = new ResultHandler($this->repo, $resultsConverter, $this->logger);
@@ -114,7 +113,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
         try {
             $this->resultHandler->handle(
-                $this->runResult,
+                $this->resultAccumulator->get(),
                 $this->config->getRootSuiteTitle() ?: self::ROOT_SUITE_TITLE,
             );
         } catch (\Exception $e) {
@@ -131,13 +130,13 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     private function validateProjectCode(): void
     {
         try {
-            $this->logger->write("checking if project '{$this->runResult->getProjectCode()}' exists... ");
+            $this->logger->write("checking if project '{$this->config->getProjectCode()}' exists... ");
 
-            $this->repo->getProjectsApi()->getProject($this->runResult->getProjectCode());
+            $this->repo->getProjectsApi()->getProject($this->config->getProjectCode());
 
             $this->logger->writeln('OK', '');
         } catch (ApiException $e) {
-            $this->logger->writeln("could not find project '{$this->runResult->getProjectCode()}'");
+            $this->logger->writeln("could not find project '{$this->config->getProjectCode()}'");
 
             throw $e;
         }
@@ -155,7 +154,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
         try {
             $this->logger->write("checking if Environment Id '{$this->config->getEnvironmentId()}' exists... ");
 
-            $this->repo->getEnvironmentsApi()->getEnvironment($this->runResult->getProjectCode(), $this->config->getEnvironmentId());
+            $this->repo->getEnvironmentsApi()->getEnvironment($this->config->getProjectCode(), $this->config->getEnvironmentId());
 
             $this->logger->writeln('OK', '');
         } catch (ApiException $e) {
