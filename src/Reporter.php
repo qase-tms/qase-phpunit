@@ -33,7 +33,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     private LoggerInterface $logger;
     private Config $config;
     private HeaderManager $headerManager;
-    private RunResultCollection $resultAccumulator;
+    private RunResultCollection $runResultCollection;
 
     public function __construct()
     {
@@ -61,7 +61,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
             $this->config->getEnvironmentId(),
         );
 
-        $this->resultAccumulator = new RunResultCollection($runResult, $this->config->isReportingEnabled());
+        $this->runResultCollection = new RunResultCollection($runResult, $this->config->isReportingEnabled());
 
         $this->repo = new Repository();
         $this->resultHandler = new ResultHandler($this->repo, $resultsConverter, $this->logger);
@@ -87,22 +87,22 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
     public function executeAfterSkippedTest(string $test, string $message, float $time): void
     {
-        $this->resultAccumulator->accumulate(self::SKIPPED, $test, $time, $message);
+        $this->runResultCollection->add(self::SKIPPED, $test, $time, $message);
     }
 
     public function executeAfterSuccessfulTest(string $test, float $time): void
     {
-        $this->resultAccumulator->accumulate(self::PASSED, $test, $time);
+        $this->runResultCollection->add(self::PASSED, $test, $time);
     }
 
     public function executeAfterTestFailure(string $test, string $message, float $time): void
     {
-        $this->resultAccumulator->accumulate(self::FAILED, $test, $time, $message);
+        $this->runResultCollection->add(self::FAILED, $test, $time, $message);
     }
 
     public function executeAfterTestError(string $test, string $message, float $time): void
     {
-        $this->resultAccumulator->accumulate(self::FAILED, $test, $time, $message);
+        $this->runResultCollection->add(self::FAILED, $test, $time, $message);
     }
 
     public function executeAfterLastTest(): void
@@ -113,7 +113,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
         try {
             $this->resultHandler->handle(
-                $this->resultAccumulator->get(),
+                $this->runResultCollection->get(),
                 $this->config->getRootSuiteTitle() ?: self::ROOT_SUITE_TITLE,
             );
         } catch (\Exception $e) {

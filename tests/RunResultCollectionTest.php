@@ -10,7 +10,7 @@ class RunResultCollectionTest extends TestCase
 {
 
     /**
-     * @dataProvider accumulateDataProvider
+     * @dataProvider autoCreateDefectDataProvider
      */
     public function testAutoCreateDefect(string $title, string $status, float $time, bool $expected)
     {
@@ -21,16 +21,16 @@ class RunResultCollectionTest extends TestCase
         $runResult->expects($this->once())
             ->method('addResult')
             ->with(
-                $this->callback(function ($o) use ($expected) {
-                    return isset($o['defect']) && $o['defect'] === $expected;
+                $this->callback(function ($result) use ($expected) {
+                    return isset($result['defect']) && $result['defect'] === $expected;
                 })
             );
 
-        $resultAccumulator = new RunResultCollection($runResult, true);
-        $resultAccumulator->accumulate($status, $title, $time);
+        $RunResultCollection = new RunResultCollection($runResult, true);
+        $RunResultCollection->add($status, $title, $time);
     }
 
-    function accumulateDataProvider(): array
+    function autoCreateDefectDataProvider(): array
     {
         return [
             ['Test (Qase ID: 1)', 'failed', 1, true],
@@ -39,6 +39,45 @@ class RunResultCollectionTest extends TestCase
             ['Test (Qase ID: 4)', 'disabled', 1, false],
             ['Test (Qase ID: 5)', 'pending', 1, false],
         ];
+    }
+
+    public function testGetReturnsRunResultObject()
+    {
+        $runResult = new RunResult('PRJ', 1, true, null);
+        $RunResultCollection = new RunResultCollection($runResult, true);
+        $this->assertInstanceOf(RunResult::class, $RunResultCollection->get());
+    }
+
+    public function testAddCorrectlyAddsResult()
+    {
+        $runResult = new RunResult('PRJ', 1, true, null);
+        $RunResultCollection = new RunResultCollection($runResult, true);
+        $runResult1 = $RunResultCollection->get();
+        $this->assertEmpty($runResult1->getResults());
+
+        $RunResultCollection->add('failed', 'Test 6', 1, 'Testing message');
+        $RunResultCollection->add('passed', 'Test 7', 0.375);
+
+        $runResult2 = $RunResultCollection->get();
+
+        $expectedResult = [
+            [
+                'status' => 'failed',
+                'time' => 1.0,
+                'full_test_name' => 'Test 6',
+                'stacktrace' => 'Testing message',
+                'defect' => true,
+            ],
+            [
+                'status' => 'passed',
+                'time' => 0.375,
+                'full_test_name' => 'Test 7',
+                'stacktrace' => null,
+                'defect' => false,
+            ],
+        ];
+
+        $this->assertSame($runResult2->getResults(), $expectedResult);
     }
 
 }

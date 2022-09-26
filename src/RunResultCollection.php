@@ -17,7 +17,7 @@ class RunResultCollection
         $this->runResult = $runResult;
     }
 
-    public function accumulate(string $status, string $test, float $time, string $message = null): void
+    public function add(string $status, string $test, float $time, string $message = null): void
     {
         if (!$this->isReportingEnabled) {
             return;
