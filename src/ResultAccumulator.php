@@ -31,4 +31,9 @@ class ResultAccumulator
             'defect' => $status === Reporter::FAILED,
         ]);
     }
+
+    public function get(): RunResult
+    {
+        return $this->runResult;
+    }
 }
