@@ -6,7 +6,7 @@ namespace Qase\PHPUnit;
 
 use Qase\PhpClientUtils\RunResult;
 
-class ResultAccumulator
+class RunResultCollection
 {
     private RunResult $runResult;
     private bool $isReportingEnabled;

@@ -3,10 +3,10 @@
 namespace Tests;
 
 use Qase\PhpClientUtils\RunResult;
-use Qase\PHPUnit\ResultAccumulator;
+use Qase\PHPUnit\RunResultCollection;
 use PHPUnit\Framework\TestCase;
 
-class ResultAccumulatorTest extends TestCase
+class RunResultCollectionTest extends TestCase
 {
 
     /**
@@ -26,7 +26,7 @@ class ResultAccumulatorTest extends TestCase
                 })
             );
 
-        $resultAccumulator = new ResultAccumulator($runResult, true);
+        $resultAccumulator = new RunResultCollection($runResult, true);
         $resultAccumulator->accumulate($status, $title, $time);
     }
 

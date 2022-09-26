@@ -33,7 +33,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     private LoggerInterface $logger;
     private Config $config;
     private HeaderManager $headerManager;
-    private ResultAccumulator $resultAccumulator;
+    private RunResultCollection $resultAccumulator;
 
     public function __construct()
     {
@@ -61,7 +61,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
             $this->config->getEnvironmentId(),
         );
 
-        $this->resultAccumulator = new ResultAccumulator($runResult, $this->config->isReportingEnabled());
+        $this->resultAccumulator = new RunResultCollection($runResult, $this->config->isReportingEnabled());
 
         $this->repo = new Repository();
         $this->resultHandler = new ResultHandler($this->repo, $resultsConverter, $this->logger);
