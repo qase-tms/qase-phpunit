@@ -48,17 +48,28 @@ class RunResultCollectionTest extends TestCase
         $this->assertInstanceOf(RunResult::class, $runResultCollection->get());
     }
 
+    public function testAddDoesNothingWhenReportingIsDisabled()
+    {
+        $runResult = new RunResult('PRJ', 1, true, null);
+        $runResultCollection = new RunResultCollection($runResult, false);
+
+        $runResultCollection->add('failed', 'Test 6', 1, 'Testing message');
+
+        $runResultWithoutResults = $runResultCollection->get();
+        $this->assertEmpty($runResultWithoutResults->getResults());
+    }
+
     public function testAddCorrectlyAddsResult()
     {
         $runResult = new RunResult('PRJ', 1, true, null);
         $runResultCollection = new RunResultCollection($runResult, true);
-        $runResult1 = $runResultCollection->get();
-        $this->assertEmpty($runResult1->getResults());
+        $runResultWithoutResults = $runResultCollection->get();
+        $this->assertEmpty($runResultWithoutResults->getResults());
 
         $runResultCollection->add('failed', 'Test 6', 1, 'Testing message');
         $runResultCollection->add('passed', 'Test 7', 0.375);
 
-        $runResult2 = $runResultCollection->get();
+        $runResultWithResults = $runResultCollection->get();
 
         $expectedResult = [
             [
@@ -77,7 +88,7 @@ class RunResultCollectionTest extends TestCase
             ],
         ];
 
-        $this->assertSame($runResult2->getResults(), $expectedResult);
+        $this->assertSame($runResultWithResults->getResults(), $expectedResult);
     }
 
 }
