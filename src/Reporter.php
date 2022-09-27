@@ -26,14 +26,14 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
     private const PASSED = 'passed';
     private const SKIPPED = 'skipped';
-    private const FAILED = 'failed';
+    public const FAILED = 'failed';
 
-    private RunResult $runResult;
     private Repository $repo;
     private ResultHandler $resultHandler;
     private LoggerInterface $logger;
     private Config $config;
     private HeaderManager $headerManager;
+    private RunResultCollection $runResultCollection;
 
     public function __construct()
     {
@@ -54,12 +54,14 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
         $this->config->validate();
 
-        $this->runResult = new RunResult(
+        $runResult = new RunResult(
             $this->config->getProjectCode(),
             $this->config->getRunId(),
             $this->config->getCompleteRunAfterSubmit(),
             $this->config->getEnvironmentId(),
         );
+
+        $this->runResultCollection = new RunResultCollection($runResult, $this->config->isReportingEnabled());
 
         $this->repo = new Repository();
         $this->resultHandler = new ResultHandler($this->repo, $resultsConverter, $this->logger);
@@ -85,36 +87,22 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
     public function executeAfterSkippedTest(string $test, string $message, float $time): void
     {
-        $this->accumulateTestResult(self::SKIPPED, $test, $time, $message);
+        $this->runResultCollection->add(self::SKIPPED, $test, $time, $message);
     }
 
     public function executeAfterSuccessfulTest(string $test, float $time): void
     {
-        $this->accumulateTestResult(self::PASSED, $test, $time);
+        $this->runResultCollection->add(self::PASSED, $test, $time);
     }
 
     public function executeAfterTestFailure(string $test, string $message, float $time): void
     {
-        $this->accumulateTestResult(self::FAILED, $test, $time, $message);
+        $this->runResultCollection->add(self::FAILED, $test, $time, $message);
     }
 
     public function executeAfterTestError(string $test, string $message, float $time): void
     {
-        $this->accumulateTestResult(self::FAILED, $test, $time, $message);
-    }
-
-    private function accumulateTestResult(string $status, string $test, float $time, string $message = null): void
-    {
-        if (!$this->config->isReportingEnabled()) {
-            return;
-        }
-
-        $this->runResult->addResult([
-            'status' => $status,
-            'time' => $time,
-            'full_test_name' => $test,
-            'stacktrace' => $status === self::FAILED ? $message : null,
-        ]);
+        $this->runResultCollection->add(self::FAILED, $test, $time, $message);
     }
 
     public function executeAfterLastTest(): void
@@ -125,7 +113,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
         try {
             $this->resultHandler->handle(
-                $this->runResult,
+                $this->runResultCollection->get(),
                 $this->config->getRootSuiteTitle() ?: self::ROOT_SUITE_TITLE,
             );
         } catch (\Exception $e) {
@@ -142,13 +130,13 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
     private function validateProjectCode(): void
     {
         try {
-            $this->logger->write("checking if project '{$this->runResult->getProjectCode()}' exists... ");
+            $this->logger->write("checking if project '{$this->config->getProjectCode()}' exists... ");
 
-            $this->repo->getProjectsApi()->getProject($this->runResult->getProjectCode());
+            $this->repo->getProjectsApi()->getProject($this->config->getProjectCode());
 
             $this->logger->writeln('OK', '');
         } catch (ApiException $e) {
-            $this->logger->writeln("could not find project '{$this->runResult->getProjectCode()}'");
+            $this->logger->writeln("could not find project '{$this->config->getProjectCode()}'");
 
             throw $e;
         }
@@ -166,7 +154,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
         try {
             $this->logger->write("checking if Environment Id '{$this->config->getEnvironmentId()}' exists... ");
 
-            $this->repo->getEnvironmentsApi()->getEnvironment($this->runResult->getProjectCode(), $this->config->getEnvironmentId());
+            $this->repo->getEnvironmentsApi()->getEnvironment($this->config->getProjectCode(), $this->config->getEnvironmentId());
 
             $this->logger->writeln('OK', '');
         } catch (ApiException $e) {
