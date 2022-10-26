@@ -41,14 +41,14 @@ class RunResultCollectionTest extends TestCase
         ];
     }
 
-    public function testGetReturnsRunResultObject()
+    public function testGettingRunResultFromCollection()
     {
         $runResult = new RunResult('PRJ', 1, true, null);
         $runResultCollection = new RunResultCollection($runResult, true);
         $this->assertInstanceOf(RunResult::class, $runResultCollection->get());
     }
 
-    public function testAddDoesNothingWhenReportingIsDisabled()
+    public function testResultCollectionIsEmptyWhenReportingIsDisabled()
     {
         $runResult = new RunResult('PRJ', 1, true, null);
         $runResultCollection = new RunResultCollection($runResult, false);
@@ -59,7 +59,7 @@ class RunResultCollectionTest extends TestCase
         $this->assertEmpty($runResultWithoutResults->getResults());
     }
 
-    public function testAddCorrectlyAddsResult()
+    public function testAddingResults()
     {
         $runResult = new RunResult('PRJ', 1, true, null);
         $runResultCollection = new RunResultCollection($runResult, true);
