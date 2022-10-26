@@ -37,7 +37,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
     public function __construct()
     {
-        $this->config = new Config();
+        $this->config = new Config('PHPUnit');
         if ($this->config->isLoggingEnabled()) {
             $this->logger = new ConsoleLogger();
         } else {
@@ -54,12 +54,7 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
         $this->config->validate();
 
-        $runResult = new RunResult(
-            $this->config->getProjectCode(),
-            $this->config->getRunId(),
-            $this->config->getCompleteRunAfterSubmit(),
-            $this->config->getEnvironmentId(),
-        );
+        $runResult = new RunResult($this->config);
 
         $this->runResultCollection = new RunResultCollection($runResult, $this->config->isReportingEnabled());
 
