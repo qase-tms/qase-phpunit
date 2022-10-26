@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Qase\PhpClientUtils\Config;
 use Qase\PhpClientUtils\RunResult;
 use Qase\PHPUnit\RunResultCollection;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +16,7 @@ class RunResultCollectionTest extends TestCase
     public function testAutoCreateDefect(string $title, string $status, float $time, bool $expected)
     {
         $runResult = $this->getMockBuilder(RunResult::class)
-            ->setConstructorArgs(['PRJ', null, true])
+            ->setConstructorArgs([$this->createConfig()])
             ->getMock();
 
         $runResult->expects($this->once())
@@ -43,14 +44,14 @@ class RunResultCollectionTest extends TestCase
 
     public function testGettingRunResultFromCollection()
     {
-        $runResult = new RunResult('PRJ', 1, true, null);
+        $runResult = new RunResult($this->createConfig());
         $runResultCollection = new RunResultCollection($runResult, true);
         $this->assertInstanceOf(RunResult::class, $runResultCollection->get());
     }
 
     public function testResultCollectionIsEmptyWhenReportingIsDisabled()
     {
-        $runResult = new RunResult('PRJ', 1, true, null);
+        $runResult = new RunResult($this->createConfig());
         $runResultCollection = new RunResultCollection($runResult, false);
 
         $runResultCollection->add('failed', 'Test 6', 1, 'Testing message');
@@ -61,7 +62,7 @@ class RunResultCollectionTest extends TestCase
 
     public function testAddingResults()
     {
-        $runResult = new RunResult('PRJ', 1, true, null);
+        $runResult = new RunResult($this->createConfig());
         $runResultCollection = new RunResultCollection($runResult, true);
         $runResultWithoutResults = $runResultCollection->get();
         $this->assertEmpty($runResultWithoutResults->getResults());
@@ -92,4 +93,14 @@ class RunResultCollectionTest extends TestCase
         $this->assertSame($runResultWithResults->getResults(), $expectedResult);
     }
 
+    private function createConfig(string $projectCode = 'PRJ', ?int $runId = null): Config
+    {
+        $config = $this->getMockBuilder(Config::class)
+            ->setConstructorArgs(['Reporter'])->getMock();
+        $config->method('getRunId')->willReturn($runId);
+        $config->method('getProjectCode')->willReturn($projectCode);
+        $config->method('getEnvironmentId')->willReturn(null);
+
+        return $config;
+    }
 }
