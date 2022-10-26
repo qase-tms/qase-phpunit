@@ -52,8 +52,6 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
 
         $this->headerManager = new HeaderManager();
 
-        $this->config->validate();
-
         $runResult = new RunResult($this->config);
 
         $this->runResultCollection = new RunResultCollection($runResult, $this->config->isReportingEnabled());
