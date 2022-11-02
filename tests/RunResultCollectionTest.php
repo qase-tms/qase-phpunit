@@ -10,6 +10,13 @@ use PHPUnit\Framework\TestCase;
 class RunResultCollectionTest extends TestCase
 {
 
+    protected function setUp(): void
+    {
+        putenv('QASE_PROJECT_CODE=hi');
+        putenv('QASE_API_BASE_URL=hi');
+        putenv('QASE_API_TOKEN=hi');
+    }
+
     /**
      * @dataProvider autoCreateDefectDataProvider
      */
