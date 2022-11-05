@@ -102,8 +102,7 @@ class RunResultCollectionTest extends TestCase
 
     private function createConfig(string $projectCode = 'PRJ', ?int $runId = null): Config
     {
-        $config = $this->getMockBuilder(Config::class)
-            ->setConstructorArgs(['Reporter'])->getMock();
+        $config = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
         $config->method('getRunId')->willReturn($runId);
         $config->method('getProjectCode')->willReturn($projectCode);
         $config->method('getEnvironmentId')->willReturn(null);
