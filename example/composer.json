@@ -1,6 +1,6 @@
 {
     "require": {
-        "qase/phpunit-reporter": "^1.1.1"
+        "qase/phpunit-reporter": "^1.3.0"
     },
     "autoload": {
         "files": [
