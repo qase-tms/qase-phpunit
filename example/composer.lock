@@ -1326,7 +1326,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/in4s/qase-phpunit",
-                "reference": "9cab37e0188e2aa200291efb16f9d038e804d0e5"
+                "reference": "9e64cbc7e8d5a180d3c2de8e4f2bdc34cc0e9a2d"
             },
             "require": {
                 "ext-json": "*",
@@ -1381,7 +1381,7 @@
                 "reporter",
                 "tms"
             ],
-            "time": "2022-11-11T15:22:59+00:00"
+            "time": "2022-11-11T16:31:51+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
