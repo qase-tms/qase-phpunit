@@ -6,6 +6,7 @@
   <testsuites>
     <testsuite name="qase-phpunit">
       <file>EmailTest.php</file>
+      <file>ExampleTest.php</file>
     </testsuite>
   </testsuites>
   <php>
