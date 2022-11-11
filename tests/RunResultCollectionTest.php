@@ -24,7 +24,7 @@ class RunResultCollectionTest extends TestCase
                 })
             );
 
-        $runResultCollection = new RunResultCollection($runResult, true);
+        $runResultCollection = $this->createRunResultCollection($runResult);
         $runResultCollection->add($status, $title, $time);
     }
 
@@ -41,16 +41,15 @@ class RunResultCollectionTest extends TestCase
 
     public function testGettingRunResultFromCollection()
     {
-        $runResult = new RunResult($this->createConfig());
-        $runResultCollection = new RunResultCollection($runResult, true);
+        $runResultCollection = $this->createRunResultCollection();
         $this->assertInstanceOf(RunResult::class, $runResultCollection->get());
     }
 
     public function testResultCollectionIsEmptyWhenReportingIsDisabled()
     {
-        $runResult = new RunResult($this->createConfig());
-        $runResultCollection = new RunResultCollection($runResult, false);
-
+        $runResult = null;
+        $isReportingEnabled = false;
+        $runResultCollection = $this->createRunResultCollection($runResult, $isReportingEnabled);
         $runResultCollection->add('failed', 'Test 6', 1, 'Testing message');
 
         $runResult = $runResultCollection->get();
@@ -60,44 +59,46 @@ class RunResultCollectionTest extends TestCase
 
     public function testAddingResults()
     {
-        $runResult = new RunResult($this->createConfig());
-        $runResultCollection = new RunResultCollection($runResult, true);
-        $runResultWithoutResults = $runResultCollection->get();
-        $this->assertEmpty($runResultWithoutResults->getResults());
-
+        // Arrange
         $stackTraceMessage = 'Stack trace text';
-        $runResultCollection->add('failed', 'Test 7', 1, $stackTraceMessage);
-        $runResultCollection->add('passed', 'Test 8', 0.375);
-
-        $runResultWithResults = $runResultCollection->get();
-
         $expectedResult = [
             [
                 'status' => 'failed',
                 'time' => 1.0,
-                'full_test_name' => 'Test 7',
+                'full_test_name' => 'Unit::methodName',
                 'stacktrace' => $stackTraceMessage,
                 'defect' => true,
             ],
             [
                 'status' => 'passed',
                 'time' => 0.375,
-                'full_test_name' => 'Test 8',
+                'full_test_name' => 'Unit::methodName',
                 'stacktrace' => null,
                 'defect' => false,
             ],
         ];
 
-        $this->assertSame($runResultWithResults->getResults(), $expectedResult);
+        // Act: Initialize empty Collection
+        $runResultCollection = $this->createRunResultCollection();
+        // Assert: Insure results are empty
+        $runResult = $runResultCollection->get();
+        $this->assertEmpty($runResult->getResults());
+
+        // Act: Add run results to the collection
+        $runResultCollection->add('failed', 'Unit::methodName', 1, $stackTraceMessage);
+        $runResultCollection->add('passed', 'Unit::methodName', 0.375);
+        // Assert: Check collection results
+        $runResult = $runResultCollection->get();
+        $this->assertSame($runResult->getResults(), $expectedResult);
     }
 
-    private function createConfig(string $projectCode = 'PRJ', ?int $runId = null): Config
+    private function createRunResultCollection(
+        ?RunResult $runResult = null,
+        bool $isReportingEnabled = true
+    ): RunResultCollection
     {
-        $config = $this->getMockBuilder(Config::class)->disableOriginalConstructor()->getMock();
-        $config->method('getRunId')->willReturn($runId);
-        $config->method('getProjectCode')->willReturn($projectCode);
-        $config->method('getEnvironmentId')->willReturn(null);
+        $runResult = $runResult ?: new RunResult($this->createStub(Config::class));
 
-        return $config;
+        return new RunResultCollection($runResult, $isReportingEnabled);
     }
 }
