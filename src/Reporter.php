@@ -17,8 +17,8 @@ use Qase\PhpClientUtils\ConsoleLogger;
 use Qase\PhpClientUtils\NullLogger;
 use Qase\PhpClientUtils\Repository;
 use Qase\PhpClientUtils\ResultHandler;
-use Qase\PhpClientUtils\RunResult;
 use Qase\PhpClientUtils\ResultsConverter;
+use Qase\PhpClientUtils\RunResult;
 
 class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTestFailureHook, AfterTestErrorHook, AfterLastTestHook, BeforeFirstTestHook
 {
@@ -43,21 +43,20 @@ class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTe
         } else {
             $this->logger = new NullLogger();
         }
-        $resultsConverter = new ResultsConverter($this->logger);
+
+        $runResult = new RunResult($this->config);
+        $this->runResultCollection = new RunResultCollection($runResult, $this->config->isReportingEnabled());
 
         if (!$this->config->isReportingEnabled()) {
             $this->logger->writeln('Reporting to Qase.io is disabled. Set the environment variable QASE_REPORT=1 to enable it.');
             return;
         }
 
-        $this->headerManager = new HeaderManager();
-
-        $runResult = new RunResult($this->config);
-
-        $this->runResultCollection = new RunResultCollection($runResult, $this->config->isReportingEnabled());
-
         $this->repo = new Repository();
+        $resultsConverter = new ResultsConverter($this->logger);
         $this->resultHandler = new ResultHandler($this->repo, $resultsConverter, $this->logger);
+
+        $this->headerManager = new HeaderManager();
     }
 
     /**
