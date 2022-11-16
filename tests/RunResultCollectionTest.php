@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Qase\PhpClientUtils\Config;
 use Qase\PhpClientUtils\RunResult;
 use Qase\PHPUnit\RunResultCollection;
 use PHPUnit\Framework\TestCase;
@@ -14,10 +15,7 @@ class RunResultCollectionTest extends TestCase
      */
     public function testAutoCreateDefect(string $title, string $status, float $time, bool $expected)
     {
-        $runResult = $this->getMockBuilder(RunResult::class)
-            ->setConstructorArgs(['PRJ', null, true])
-            ->getMock();
-
+        $runResult = $this->createMock(RunResult::class);
         $runResult->expects($this->once())
             ->method('addResult')
             ->with(
@@ -26,7 +24,7 @@ class RunResultCollectionTest extends TestCase
                 })
             );
 
-        $runResultCollection = new RunResultCollection($runResult, true);
+        $runResultCollection = $this->createRunResultCollection($runResult);
         $runResultCollection->add($status, $title, $time);
     }
 
@@ -41,55 +39,66 @@ class RunResultCollectionTest extends TestCase
         ];
     }
 
-    public function testGetReturnsRunResultObject()
+    public function testGettingRunResultFromCollection()
     {
-        $runResult = new RunResult('PRJ', 1, true, null);
-        $runResultCollection = new RunResultCollection($runResult, true);
+        $runResultCollection = $this->createRunResultCollection();
         $this->assertInstanceOf(RunResult::class, $runResultCollection->get());
     }
 
-    public function testAddDoesNothingWhenReportingIsDisabled()
+    public function testResultCollectionIsEmptyWhenReportingIsDisabled()
     {
-        $runResult = new RunResult('PRJ', 1, true, null);
-        $runResultCollection = new RunResultCollection($runResult, false);
-
+        $runResult = null;
+        $isReportingEnabled = false;
+        $runResultCollection = $this->createRunResultCollection($runResult, $isReportingEnabled);
         $runResultCollection->add('failed', 'Test 6', 1, 'Testing message');
 
-        $runResultWithoutResults = $runResultCollection->get();
-        $this->assertEmpty($runResultWithoutResults->getResults());
+        $runResult = $runResultCollection->get();
+
+        $this->assertEmpty($runResult->getResults());
     }
 
-    public function testAddCorrectlyAddsResult()
+    public function testAddingResults()
     {
-        $runResult = new RunResult('PRJ', 1, true, null);
-        $runResultCollection = new RunResultCollection($runResult, true);
-        $runResultWithoutResults = $runResultCollection->get();
-        $this->assertEmpty($runResultWithoutResults->getResults());
-
+        // Arrange
         $stackTraceMessage = 'Stack trace text';
-        $runResultCollection->add('failed', 'Test 7', 1, $stackTraceMessage);
-        $runResultCollection->add('passed', 'Test 8', 0.375);
-
-        $runResultWithResults = $runResultCollection->get();
-
         $expectedResult = [
             [
                 'status' => 'failed',
                 'time' => 1.0,
-                'full_test_name' => 'Test 7',
+                'full_test_name' => 'Unit::methodName',
                 'stacktrace' => $stackTraceMessage,
                 'defect' => true,
             ],
             [
                 'status' => 'passed',
                 'time' => 0.375,
-                'full_test_name' => 'Test 8',
+                'full_test_name' => 'Unit::methodName',
                 'stacktrace' => null,
                 'defect' => false,
             ],
         ];
 
-        $this->assertSame($runResultWithResults->getResults(), $expectedResult);
+        // Act: Initialize empty Collection
+        $runResultCollection = $this->createRunResultCollection();
+        // Assert: Insure results are empty
+        $runResult = $runResultCollection->get();
+        $this->assertEmpty($runResult->getResults());
+
+        // Act: Add run results to the collection
+        $runResultCollection->add('failed', 'Unit::methodName', 1, $stackTraceMessage);
+        $runResultCollection->add('passed', 'Unit::methodName', 0.375);
+        // Assert: Check collection results
+        $runResult = $runResultCollection->get();
+        $this->assertSame($runResult->getResults(), $expectedResult);
     }
 
+    private function createRunResultCollection(
+        ?RunResult $runResult = null,
+        bool $isReportingEnabled = true
+    ): RunResultCollection
+    {
+        $runResult = $runResult ?: new RunResult($this->createStub(Config::class));
+
+        return new RunResultCollection($runResult, $isReportingEnabled);
+    }
 }

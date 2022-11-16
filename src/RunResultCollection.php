@@ -17,6 +17,11 @@ class RunResultCollection
         $this->runResult = $runResult;
     }
 
+    public function get(): RunResult
+    {
+        return $this->runResult;
+    }
+
     public function add(string $status, string $test, float $time, string $message = null): void
     {
         if (!$this->isReportingEnabled) {
@@ -30,10 +35,5 @@ class RunResultCollection
             'stacktrace' => $status === Reporter::FAILED ? $message : null,
             'defect' => $status === Reporter::FAILED,
         ]);
-    }
-
-    public function get(): RunResult
-    {
-        return $this->runResult;
     }
 }

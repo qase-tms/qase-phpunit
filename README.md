@@ -100,8 +100,10 @@ Reporter options (* - required):
 - *`QASE_API_TOKEN` - access token, you can find more information [here][auth].
 - *`QASE_PROJECT_CODE` - code of your project (can be extracted from main page of your project,
   as example, for `https://app.qase.io/project/DEMO` -> `DEMO` is project code here.
-- `QASE_API_BASE_URL` - URL endpoint API from Qase TMS, default is `https://api.qase.io/v1`.
+- *`QASE_API_BASE_URL` - URL endpoint API from Qase TMS, default is `https://api.qase.io/v1`.
 - `QASE_RUN_ID` - allows you to use an existing test run instead of creating new.
+- `QASE_RUN_NAME` - Set custom Run name, when new run is created.
+- `QASE_RUN_DESCRIPTION` - Set custom Run description, when new run is created.
 - `QASE_RUN_COMPLETE` - performs the "complete" function after passing the test run.
 - `QASE_ENVIRONMENT_ID` - environment ID from Qase TMS
 - `QASE_LOGGING` - toggles debug logging, set `1` to enable
@@ -120,13 +122,16 @@ The configuration file should be called `phpunit.xml`, an example of such a file
     </testsuite>
   </testsuites>
   <php>
-    <env name="QASE_REPORT" value="1"/>
-    <env name="QASE_PROJECT_CODE" value="project_code"/>
-    <env name="QASE_API_BASE_URL" value="https://api.qase.io/v1"/>
-    <env name="QASE_API_TOKEN" value="api_key"/>
-    <env name="QASE_ENVIRONMENT_ID" value="environment_id"/>
-    <env name="QASE_RUN_COMPLETE" value="1"/>
-    <env name="QASE_RUN_ID"/>
+    <env name="QASE_REPORT" value="1" force="true" />
+    <env name="QASE_API_TOKEN" value="<api_key>" force="true" />
+    <env name="QASE_PROJECT_CODE" value="<project_code>" force="true" />
+    <env name="QASE_API_BASE_URL" value="https://api.qase.io/v1" force="true" />
+    <env name="QASE_RUN_ID" value="" force="true" />
+    <env name="QASE_RUN_NAME" value="PHPUnit run" force="true" />
+    <env name="QASE_RUN_DESCRIPTION" value="PHPUnit automated run" force="true" />
+    <env name="QASE_RUN_COMPLETE" value="1" force="true" />
+    <env name="QASE_ENVIRONMENT_ID" value="1" force="true" />
+    <env name="QASE_LOGGING" value="1" force="true" />
   </php>
 </phpunit>
 ```

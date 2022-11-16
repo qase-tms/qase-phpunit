@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2e7fefb59bc05ecb1e2eb43ad4cb314f",
+    "content-hash": "63367cb84e544e176f2d55c75ae0ba27",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -290,16 +290,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.4.1",
+            "version": "2.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "69568e4293f4fa993f3b0e51c9723e1e17c41379"
+                "reference": "67c26b443f348a51926030c83481b85718457d3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/69568e4293f4fa993f3b0e51c9723e1e17c41379",
-                "reference": "69568e4293f4fa993f3b0e51c9723e1e17c41379",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/67c26b443f348a51926030c83481b85718457d3d",
+                "reference": "67c26b443f348a51926030c83481b85718457d3d",
                 "shasum": ""
             },
             "require": {
@@ -389,7 +389,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.4.1"
+                "source": "https://github.com/guzzle/psr7/tree/2.4.3"
             },
             "funding": [
                 {
@@ -405,7 +405,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-08-28T14:45:39+00:00"
+            "time": "2022-10-26T14:07:24+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -635,16 +635,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "9.2.17",
+            "version": "9.2.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "aa94dc41e8661fe90c7316849907cba3007b10d8"
+                "reference": "12fddc491826940cf9b7e88ad9664cf51f0f6d0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/aa94dc41e8661fe90c7316849907cba3007b10d8",
-                "reference": "aa94dc41e8661fe90c7316849907cba3007b10d8",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/12fddc491826940cf9b7e88ad9664cf51f0f6d0a",
+                "reference": "12fddc491826940cf9b7e88ad9664cf51f0f6d0a",
                 "shasum": ""
             },
             "require": {
@@ -700,7 +700,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.17"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.18"
             },
             "funding": [
                 {
@@ -708,7 +708,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-30T12:24:04+00:00"
+            "time": "2022-10-27T13:35:33+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -953,16 +953,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.5.25",
+            "version": "9.5.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3e6f90ca7e3d02025b1d147bd8d4a89fd4ca8a1d"
+                "reference": "851867efcbb6a1b992ec515c71cdcf20d895e9d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3e6f90ca7e3d02025b1d147bd8d4a89fd4ca8a1d",
-                "reference": "3e6f90ca7e3d02025b1d147bd8d4a89fd4ca8a1d",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/851867efcbb6a1b992ec515c71cdcf20d895e9d2",
+                "reference": "851867efcbb6a1b992ec515c71cdcf20d895e9d2",
                 "shasum": ""
             },
             "require": {
@@ -1035,7 +1035,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.25"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.26"
             },
             "funding": [
                 {
@@ -1051,7 +1051,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-09-25T03:44:45+00:00"
+            "time": "2022-10-28T06:00:21+00:00"
         },
         {
             "name": "psr/http-client",
@@ -1284,22 +1284,24 @@
         },
         {
             "name": "qase/php-client-utils",
-            "version": "v1.0.3",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/qase-tms/qase-php-client-utils.git",
-                "reference": "556a43910ecb6df2a3a76842bc56d93bb83f5a32"
+                "reference": "ff2a863adafa5bb5589a5c0a96b36b4d39c0a72c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/qase-tms/qase-php-client-utils/zipball/556a43910ecb6df2a3a76842bc56d93bb83f5a32",
-                "reference": "556a43910ecb6df2a3a76842bc56d93bb83f5a32",
+                "url": "https://api.github.com/repos/qase-tms/qase-php-client-utils/zipball/ff2a863adafa5bb5589a5c0a96b36b4d39c0a72c",
+                "reference": "ff2a863adafa5bb5589a5c0a96b36b4d39c0a72c",
                 "shasum": ""
             },
             "require": {
+                "php": "^7.4 || ^8.0",
                 "qase/api": "v1.2.0"
             },
             "require-dev": {
+                "ext-json": "*",
                 "phpunit/phpunit": "^8.0 || ^9.0"
             },
             "type": "library",
@@ -1314,24 +1316,24 @@
             ],
             "support": {
                 "issues": "https://github.com/qase-tms/qase-php-client-utils/issues",
-                "source": "https://github.com/qase-tms/qase-php-client-utils/tree/v1.0.3"
+                "source": "https://github.com/qase-tms/qase-php-client-utils/tree/v2.0.0"
             },
-            "time": "2022-09-14T21:25:34+00:00"
+            "time": "2022-11-10T09:31:53+00:00"
         },
         {
             "name": "qase/phpunit-reporter",
-            "version": "dev-accumulateTestResult_moved2",
+            "version": "dev-utils_2_0_0_support",
             "source": {
                 "type": "git",
                 "url": "https://github.com/in4s/qase-phpunit",
-                "reference": "1ce5b4f4472b00e41b1472371343cc79cd740099"
+                "reference": "9e64cbc7e8d5a180d3c2de8e4f2bdc34cc0e9a2d"
             },
             "require": {
                 "ext-json": "*",
                 "php": "^7.4 || ^8.0",
                 "phpunit/phpunit": "^8.0 || ^9.0",
                 "qase/api": "v1.2.0",
-                "qase/php-client-utils": "^1.0.3"
+                "qase/php-client-utils": "v2.0.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.4",
@@ -1379,7 +1381,7 @@
                 "reporter",
                 "tms"
             ],
-            "time": "2022-09-26T17:07:56+00:00"
+            "time": "2022-11-11T16:31:51+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -2508,7 +2510,14 @@
         }
     ],
     "packages-dev": [],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "qase/phpunit-reporter",
+            "version": "dev-utils_2_0_0_support",
+            "alias": "v1.3.0",
+            "alias_normalized": "1.3.0.0"
+        }
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
         "qase/phpunit-reporter": 20
