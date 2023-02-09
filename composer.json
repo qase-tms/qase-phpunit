@@ -1,6 +1,6 @@
 {
     "name": "qase/phpunit-reporter",
-    "description": "Qase TMS PHPUnit reporter.",
+    "description": "Qase PHPUnit reporter.",
     "homepage": "https://developers.qase.io",
     "type": "library",
     "license": "Apache-2.0",
@@ -12,6 +12,10 @@
         {
             "name": "Sergey Skaridov",
             "email": "s.skaridov@gmail.com"
+        },
+        {
+            "name": "Nikita Fedorov",
+            "email": "nik333r@gmail.com"
         }
     ],
     "keywords": [
@@ -25,8 +29,7 @@
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "phpunit/phpunit": "^8.0 || ^9.0",
-        "qase/api": "v1.2.0",
-        "qase/php-client-utils": "v2.0.0"
+        "qase/php-commons": "1.0.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.4",

@@ -10,149 +10,124 @@ use PHPUnit\Runner\AfterSuccessfulTestHook;
 use PHPUnit\Runner\AfterTestErrorHook;
 use PHPUnit\Runner\AfterTestFailureHook;
 use PHPUnit\Runner\BeforeFirstTestHook;
-use Qase\Client\ApiException;
-use Qase\PhpClientUtils\Config;
-use Qase\PhpClientUtils\LoggerInterface;
-use Qase\PhpClientUtils\ConsoleLogger;
-use Qase\PhpClientUtils\NullLogger;
-use Qase\PhpClientUtils\Repository;
-use Qase\PhpClientUtils\ResultHandler;
-use Qase\PhpClientUtils\ResultsConverter;
-use Qase\PhpClientUtils\RunResult;
+use PHPUnit\Runner\BeforeTestHook;
+use Qase\PhpCommons\Config\BaseConfig;
+use Qase\PhpCommons\Config\ReportConfig;
+use Qase\PhpCommons\Loggers\ConsoleLogger;
+use Qase\PhpCommons\Loggers\NullLogger;
+use Qase\PhpCommons\Reporters\Report;
+use Qase\PhpCommons\Reporters\TestOps;
+use Qase\PhpCommons\Config\TestOpsConfig;
+use Qase\PhpCommons\Interfaces\ReporterInterface;
+use Qase\PhpCommons\Models\Result;
 
-class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTestFailureHook, AfterTestErrorHook, AfterLastTestHook, BeforeFirstTestHook
+class Reporter implements AfterSuccessfulTestHook, AfterSkippedTestHook, AfterTestFailureHook, AfterTestErrorHook, AfterLastTestHook, BeforeFirstTestHook, BeforeTestHook
 {
     private const ROOT_SUITE_TITLE = 'PHPUnit tests';
+
+    private const REPORTER_NAME = 'PHPUnit';
 
     private const PASSED = 'passed';
     private const SKIPPED = 'skipped';
     public const FAILED = 'failed';
+    public const INVALID = 'invalid';
 
-    private Repository $repo;
-    private ResultHandler $resultHandler;
-    private LoggerInterface $logger;
-    private Config $config;
     private HeaderManager $headerManager;
-    private RunResultCollection $runResultCollection;
+
+    private ReporterInterface $reporter;
+
+    private bool $isEnabled = false;
+
+    private BaseConfig $config;
+
+    private $logger;
+
+    private Result $currentResult;
 
     public function __construct()
     {
-        $this->config = new Config('PHPUnit');
-        if ($this->config->isLoggingEnabled()) {
+        if (isset($_ENV['QASE_DEBUG'])) {
             $this->logger = new ConsoleLogger();
         } else {
             $this->logger = new NullLogger();
         }
-
-        $runResult = new RunResult($this->config);
-        $this->runResultCollection = new RunResultCollection($runResult, $this->config->isReportingEnabled());
-
-        if (!$this->config->isReportingEnabled()) {
-            $this->logger->writeln('Reporting to Qase.io is disabled. Set the environment variable QASE_REPORT=1 to enable it.');
+        
+        if (!isset($_ENV['QASE_MODE'])) {
+            $this->logger->writeln('Reporting to Qase.io is disabled. Set the environment variable QASE_MODE=testops or QASE_MODE=report to enable it.');
             return;
         }
 
-        $this->repo = new Repository();
-        $resultsConverter = new ResultsConverter($this->logger);
-        $this->resultHandler = new ResultHandler($this->repo, $resultsConverter, $this->logger);
-
-        $this->headerManager = new HeaderManager();
+        try {
+            switch ($_ENV['QASE_MODE']) {
+                case "testops":
+                    $this->config = new TestOpsConfig(self::REPORTER_NAME, $this->logger, new HeaderManager());
+                    $this->reporter = new TestOps($this->config);
+                    break;
+                case "report":
+                    $this->config = new ReportConfig(self::REPORTER_NAME, $this->logger);
+                    $this->reporter = new Report($this->config);
+                    break;
+                default:
+                    $this->logger->writeln('Invalid Qase Reporter mode. Set the environment variable QASE_MODE=testops or QASE_MODE=report.');
+                    return;
+            }
+            $this->isEnabled = true;
+        } catch (\Exception $e) {
+            $this->logger->writeln($e->getMessage());
+        }
     }
-
-    /**
-     * @throws ApiException
-     */
+    
     public function executeBeforeFirstTest(): void
     {
-        if (!$this->config->isReportingEnabled()) {
+        if (!$this->isEnabled) {
             return;
         }
 
-        $this->repo->init(
-            $this->config,
-            $this->headerManager->getClientHeaders()
-        );
+        $this->reporter->startRun();
+    }
 
-        $this->validateProjectCode();
-        $this->validateEnvironmentId();
+    public function executeBeforeTest(string $test): void
+    {
+        if (!$this->isEnabled) {
+            return;
+        }
+
+        $this->currentResult = new Result($test);
     }
 
     public function executeAfterSkippedTest(string $test, string $message, float $time): void
     {
-        $this->runResultCollection->add(self::SKIPPED, $test, $time, $message);
+        $this->currentResult->status = self::SKIPPED;
+        $this->currentResult->duration = (int)floor($time*1000);
+        $this->currentResult->comment = $message;
+        $this->reporter->addResult($this->currentResult);
     }
 
     public function executeAfterSuccessfulTest(string $test, float $time): void
     {
-        $this->runResultCollection->add(self::PASSED, $test, $time);
+        $this->currentResult->status = self::PASSED;
+        $this->currentResult->duration = (int)floor($time*1000);
+        $this->reporter->addResult($this->currentResult);
     }
 
     public function executeAfterTestFailure(string $test, string $message, float $time): void
     {
-        $this->runResultCollection->add(self::FAILED, $test, $time, $message);
+        $this->currentResult->status = self::FAILED;
+        $this->currentResult->duration = (int)floor($time*1000);
+        $this->currentResult->comment = $message;
+        $this->reporter->addResult($this->currentResult);
     }
 
     public function executeAfterTestError(string $test, string $message, float $time): void
     {
-        $this->runResultCollection->add(self::FAILED, $test, $time, $message);
+        $this->currentResult->status = self::INVALID;
+        $this->currentResult->duration = (int)floor($time*1000);
+        $this->currentResult->comment = $message;
+        $this->reporter->addResult($this->currentResult);
     }
 
     public function executeAfterLastTest(): void
     {
-        if (!$this->config->isReportingEnabled()) {
-            return;
-        }
-
-        try {
-            $this->resultHandler->handle(
-                $this->runResultCollection->get(),
-                $this->config->getRootSuiteTitle() ?: self::ROOT_SUITE_TITLE,
-            );
-        } catch (\Exception $e) {
-            $this->logger->writeln('An exception occurred');
-            $this->logger->writeln($e->getMessage());
-
-            return;
-        }
-    }
-
-    /**
-     * @throws ApiException
-     */
-    private function validateProjectCode(): void
-    {
-        try {
-            $this->logger->write("checking if project '{$this->config->getProjectCode()}' exists... ");
-
-            $this->repo->getProjectsApi()->getProject($this->config->getProjectCode());
-
-            $this->logger->writeln('OK', '');
-        } catch (ApiException $e) {
-            $this->logger->writeln("could not find project '{$this->config->getProjectCode()}'");
-
-            throw $e;
-        }
-    }
-
-    /**
-     * @throws ApiException
-     */
-    private function validateEnvironmentId(): void
-    {
-        if ($this->config->getEnvironmentId() === null) {
-            return;
-        }
-
-        try {
-            $this->logger->write("checking if Environment Id '{$this->config->getEnvironmentId()}' exists... ");
-
-            $this->repo->getEnvironmentsApi()->getEnvironment($this->config->getProjectCode(), $this->config->getEnvironmentId());
-
-            $this->logger->writeln('OK', '');
-        } catch (ApiException $e) {
-            $this->logger->writeln("could not find Environment Id '{$this->config->getEnvironmentId()}'");
-
-            throw $e;
-        }
+        $this->reporter->completeRun();
     }
 }

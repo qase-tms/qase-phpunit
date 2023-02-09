@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Qase\PHPUnit;
 
-class HeaderManager extends \Qase\PhpClientUtils\HeaderManager
+class HeaderManager extends \Qase\PhpCommons\Utils\HeaderManager
 {
     public function getClientHeaders(): array
     {
