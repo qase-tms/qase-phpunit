@@ -1,124 +1,130 @@
-> # Qase TMS PHPUnit reporter
->
-> Publish results simple and easy.
+# Qase TMS PHPUnit Reporter
 
-## How to integrate
+Publish test results easily and efficiently.
 
-```bash
-composer require qase/phpunit-reporter
+## Installation
+
+To install the latest version, run:
+
+```sh
+composer require qase/phpunit-reporter 
 ```
 
-## Example of usage
+## Getting Started
 
-The PHPUnit reporter has the ability to auto-generate test cases
-and suites from your test data.
+The PHPUnit reporter can auto-generate test cases and suites based on your test data.
+Test results of subsequent test runs will match the same test cases as long as their names and file paths don’t change.
 
-But if necessary, you can independently register the ID of already
-existing test cases from TMS before the executing tests. For example:
+You can also annotate tests with the IDs of existing test cases from Qase.io before executing them.
+This is a more reliable way to bind automated tests to test cases, ensuring they persist when you rename, move, or
+parameterize your tests.
 
-```php
-/**
- * @qaseId 3
- */
-public function testCanBeUsedAsString(): void
+For example:
+
+```injectablephp
+<?php
+
+namespace Tests;
+
+use Exception;
+use PHPUnit\Framework\TestCase;
+use Qase\PHPUnitReporter\Attributes\Field;
+use Qase\PHPUnitReporter\Attributes\Parameter;
+use Qase\PHPUnitReporter\Attributes\QaseId;
+use Qase\PHPUnitReporter\Attributes\Suite;
+use Qase\PHPUnitReporter\Attributes\Title;
+
+#[Suite("Main suite")]
+class SimplesTest extends TestCase
 {
-    $this->assertEquals(
-        'user@example.com',
-        Email::fromString('user@example.com')
-    );
+    #[
+        Title('Test one'),
+        Parameter("param1", "value1"),
+    ]
+    public function testOne(): void
+    {
+        $this->assertTrue(true);
+    }
+
+    #[
+        QaseId(123),
+        Field('description', 'Some description'),
+        Field('severity', 'major')
+    ]
+    public function testTwo(): void
+    {
+        $this->assertTrue(false);
+    }
+
+    #[
+        Suite('Suite one'),
+        Suite('Suite two')
+    ]
+    public function testThree(): void
+    {
+        throw new Exception('Some exception');
+    }
 }
 ```
-To run tests and create a test run, execute the command:
+
+To execute PHPUnit tests and report them to Qase.io, run the command:
 
 ```bash
-$ ./vendor/bin/phpunit
+QASE_MODE=testops ./vendor/bin/phpunit
 ```
 
-![Output of run](example/screenshots/screenshot.png)
+or, if configured in a script:
 
-A test run will be performed and available at:
+```bash
+composer test
 ```
+
+A test run will be created and accessible at:
+
 https://app.qase.io/run/QASE_PROJECT_CODE
+
+### Parallel Execution
+
+The reporter supports parallel execution of tests using the `paratest` package.
+
+To run tests in parallel, use the following command:
+
+```bash
+QASE_MODE=testops ./vendor/bin/paratest
 ```
-
-If test fails, a defect will be automatically created
-
-## Using parameterization
-
-PHPUnit reporter also allows you to perform parameterization of the test case. To do this, you need to specify a dataprovider. Example:
-```php
-    /**
-     * @dataProvider additionProvider
-     */
-    public function testUsingProvider($a, $b, $expected)
-    {
-        $this->assertSame($expected, $a + $b);
-    }
-
-    public function additionProvider()
-    {
-        return [
-            [0, 0, 0],
-            [0, 1, 1],
-            [1, 0, 1],
-            [1, 1, 3]
-        ];
-    }
-```
-![dashboard](example/screenshots/screenshot2.png)
 
 ## Configuration
 
-Add to your `phpunit.xml` extension:
+Qase PHPUnit Reporter can be configured using:
 
-```xml
-<extensions>
-  <extension class="Qase\PHPUnit\Reporter"/>
-</extensions>
+1. A separate configuration file qase.config.json.
+2. Environment variables (which override the values in the configuration file).
+
+For a full list of configuration options, refer to
+the [Configuration Reference](https://github.com/qase-tms/qase-php-commons/blob/main/README.md#configuration).
+
+Example qase.config.json
+
+```json
+{
+  "mode": "testops",
+  "debug": true,
+  "testops": {
+    "api": {
+      "token": "api_key"
+    },
+    "project": "project_code",
+    "run": {
+      "complete": true
+    }
+  }
+}
 ```
 
-Reporter options (* - required):
+## Requirements
 
-- `QASE_REPORT` - toggles sending reports to Qase.io, set `1` to enable
-- *`QASE_API_TOKEN` - access token, you can find more information [here][auth].
-- *`QASE_PROJECT_CODE` - code of your project (can be extracted from main page of your project,
-  as example, for `https://app.qase.io/project/DEMO` -> `DEMO` is project code here.
-- *`QASE_API_BASE_URL` - URL endpoint API from Qase TMS, default is `https://api.qase.io/v1`.
-- `QASE_RUN_ID` - allows you to use an existing test run instead of creating new.
-- `QASE_RUN_NAME` - Set custom Run name, when new run is created.
-- `QASE_RUN_DESCRIPTION` - Set custom Run description, when new run is created.
-- `QASE_RUN_COMPLETE` - performs the "complete" function after passing the test run.
-- `QASE_ENVIRONMENT_ID` - environment ID from Qase TMS
-- `QASE_LOGGING` - toggles debug logging, set `1` to enable
+We maintain the reporter on LTS versions of PHP.
 
-The configuration file should be called `phpunit.xml`, an example of such a file:
+- php >= 8.0
+- phpunit >= 9.5
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<phpunit>
-  <extensions>
-    <extension class="Qase\PHPUnit\Reporter"/>
-  </extensions>
-  <testsuites>
-    <testsuite name="qase-phpunit">
-      <directory>./tests</directory>
-    </testsuite>
-  </testsuites>
-  <php>
-    <env name="QASE_REPORT" value="1" force="true" />
-    <env name="QASE_API_TOKEN" value="<api_key>" force="true" />
-    <env name="QASE_PROJECT_CODE" value="<project_code>" force="true" />
-    <env name="QASE_API_BASE_URL" value="https://api.qase.io/v1" force="true" />
-    <env name="QASE_RUN_ID" value="" force="true" />
-    <env name="QASE_RUN_NAME" value="PHPUnit run" force="true" />
-    <env name="QASE_RUN_DESCRIPTION" value="PHPUnit automated run" force="true" />
-    <env name="QASE_RUN_COMPLETE" value="1" force="true" />
-    <env name="QASE_ENVIRONMENT_ID" value="1" force="true" />
-    <env name="QASE_LOGGING" value="1" force="true" />
-  </php>
-</phpunit>
-```
-
-<!-- references -->
-
-[auth]: https://developers.qase.io/#authentication
