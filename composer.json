@@ -1,5 +1,5 @@
 {
-  "name": "qase/qase-phpunit-reporter",
+  "name": "qase/phpunit-reporter",
   "description": "Qase PHPUnit reporter",
   "homepage": "https://qase.io",
   "license": "Apache-2.0",
@@ -21,7 +21,7 @@
   ],
   "require": {
     "php": "^8.0",
-    "phpunit/phpunit": "^9",
+    "phpunit/phpunit": "^9 || ^10 || ^11",
     "qase/php-commons": "^2.0.0"
   },
   "require-dev": {
@@ -37,7 +37,7 @@
       "Tests\\": "tests/"
     }
   },
-  "version": "2.0.0",
+  "version": "2.0.1",
   "scripts": {
     "test": "phpunit"
   },
