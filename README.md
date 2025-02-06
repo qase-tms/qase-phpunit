@@ -10,6 +10,17 @@ To install the latest version, run:
 composer require qase/phpunit-reporter 
 ```
 
+Add the following lines to the `phpunit.xml` file:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="./vendor/autoload.php">
+    <extensions>
+        <bootstrap class="Qase\PHPUnitReporter\QaseExtension"/>
+    </extensions>
+</phpunit>
+```
+
 ## Getting Started
 
 The PHPUnit reporter can auto-generate test cases and suites based on your test data.
@@ -125,6 +136,6 @@ Example qase.config.json
 
 We maintain the reporter on LTS versions of PHP.
 
-- php >= 8.0
-- phpunit >= 9.5
+- php >= 8.1
+- phpunit >= 10
 
