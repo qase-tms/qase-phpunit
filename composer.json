@@ -20,12 +20,9 @@
     }
   ],
   "require": {
-    "php": "^8.0",
-    "phpunit/phpunit": "^9 || ^10 || ^11",
-    "qase/php-commons": "^2.0.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^9"
+    "php": "^8.1",
+    "phpunit/phpunit": "^10 || ^11",
+    "qase/php-commons": "^2.0.1"
   },
   "autoload": {
     "psr-4": {
@@ -37,13 +34,13 @@
       "Tests\\": "tests/"
     }
   },
-  "version": "2.0.1",
+  "version": "2.0.2",
   "scripts": {
     "test": "phpunit"
   },
   "config": {
     "platform": {
-      "php": "8.0"
+      "php": "8.1"
     },
     "allow-plugins": {
       "composer/package-versions-deprecated": true,
