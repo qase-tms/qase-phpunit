@@ -33,8 +33,6 @@ class QaseReporter implements QaseReporterInterface
 
     public function startTest(TestMethod $test): void
     {
-        print "\nStarting test: " . $test->className() . '::' . $test->methodName() . ':' . $test->line() . "\n";
-
         $key = $this->getTestKey($test);
 
         $metadata = $this->attributeParser->parseAttribute($test->className(), $test->methodName());
@@ -66,8 +64,6 @@ class QaseReporter implements QaseReporterInterface
 
     public function updateStatus(TestMethod $test, string $status, ?string $message = null, ?string $stackTrace = null): void
     {
-        print "\nUpdating status for test: " . $test->className() . '::' . $test->methodName() . ':' . $test->line() . "\n";
-
         $key = $this->getTestKey($test);
         $this->testResults[$key]->execution->setStatus($status);
 
@@ -82,12 +78,9 @@ class QaseReporter implements QaseReporterInterface
 
     public function completeTest(TestMethod $test): void
     {
-        print "\nCompleting test: " . $test->className() . '::' . $test->methodName() . ':' . $test->line() . "\n";
-
         $key = $this->getTestKey($test);
         $this->testResults[$key]->execution->finish();
 
-        print "\nTest completed: $key\n : \n " . json_encode($this->testResults[$key]) . "\n";
         $this->reporter->addResult($this->testResults[$key]);
     }
 
