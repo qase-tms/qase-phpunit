@@ -66,6 +66,7 @@ class SimplesTest extends TestCase
     ]
     public function testTwo(): void
     {
+        Qase::attach("/my_path/file.json");
         $this->assertTrue(false);
     }
 
@@ -75,6 +76,7 @@ class SimplesTest extends TestCase
     ]
     public function testThree(): void
     {
+        Qase::attach((object) ['title' => 'attachment.txt', 'content' => 'Some string', 'mime' => 'text/plain']);
         throw new Exception('Some exception');
     }
 }

@@ -22,7 +22,7 @@
   "require": {
     "php": "^8.1",
     "phpunit/phpunit": "^10 || ^11",
-    "qase/php-commons": "^2.0.1"
+    "qase/php-commons": "^2.0.4"
   },
   "autoload": {
     "psr-4": {
@@ -34,7 +34,7 @@
       "Tests\\": "tests/"
     }
   },
-  "version": "2.0.3",
+  "version": "2.0.4",
   "scripts": {
     "test": "phpunit"
   },
