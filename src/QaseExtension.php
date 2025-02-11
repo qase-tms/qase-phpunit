@@ -22,7 +22,7 @@ final class QaseExtension implements Extension
         $attributeReader = new AttributeReader();
         $attributeParser = new AttributeParser($logger, $attributeReader);
 
-        $reporter = new QaseReporter($attributeParser, $coreReporter);
+        $reporter = QaseReporter::getInstance($attributeParser, $coreReporter);
         
         $facade->registerSubscribers(
             new Events\TestConsideredRiskySubscriber($reporter),

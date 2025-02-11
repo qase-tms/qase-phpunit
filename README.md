@@ -32,7 +32,7 @@ parameterize your tests.
 
 For example:
 
-```injectablephp
+```php
 <?php
 
 namespace Tests;
@@ -44,6 +44,7 @@ use Qase\PHPUnitReporter\Attributes\Parameter;
 use Qase\PHPUnitReporter\Attributes\QaseId;
 use Qase\PHPUnitReporter\Attributes\Suite;
 use Qase\PHPUnitReporter\Attributes\Title;
+use Qase\PHPUnitReporter\Qase;
 
 #[Suite("Main suite")]
 class SimplesTest extends TestCase
@@ -54,6 +55,7 @@ class SimplesTest extends TestCase
     ]
     public function testOne(): void
     {
+        Qase::comment("My comment");
         $this->assertTrue(true);
     }
 

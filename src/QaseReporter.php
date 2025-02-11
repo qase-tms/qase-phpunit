@@ -11,14 +11,29 @@ use Qase\PHPUnitReporter\Attributes\AttributeParserInterface;
 
 class QaseReporter implements QaseReporterInterface
 {
+    private static QaseReporter $instance;
     private array $testResults = [];
     private AttributeParserInterface $attributeParser;
     private ReporterInterface $reporter;
+    private ?string $currentKey = null;
 
-    public function __construct(AttributeParserInterface $attributeParser, ReporterInterface $reporter)
+    private function __construct(AttributeParserInterface $attributeParser, ReporterInterface $reporter)
     {
         $this->attributeParser = $attributeParser;
         $this->reporter = $reporter;
+    }
+
+    public static function getInstance(AttributeParserInterface $attributeParser, ReporterInterface $reporter): QaseReporter
+    {
+        if (!isset(self::$instance)) {
+            self::$instance = new QaseReporter($attributeParser, $reporter);
+        }
+        return self::$instance;
+    }
+
+    public static function getInstanceWithoutInit(): ?QaseReporter
+    {
+        return self::$instance;
     }
 
     public function startTestRun(): void
@@ -34,6 +49,7 @@ class QaseReporter implements QaseReporterInterface
     public function startTest(TestMethod $test): void
     {
         $key = $this->getTestKey($test);
+        $this->currentKey = $key;
 
         $metadata = $this->attributeParser->parseAttribute($test->className(), $test->methodName());
 
@@ -97,5 +113,14 @@ class QaseReporter implements QaseReporterInterface
     private function getThread(): string
     {
         return $_ENV['TEST_TOKEN'] ?? "default";
+    }
+
+    public function addComment(string $message): void
+    {
+        if (!$this->currentKey) {
+            return;
+        }
+
+        $this->testResults[$this->currentKey]->message = $this->testResults[$this->currentKey]->message . $message . "\n";
     }
 }
