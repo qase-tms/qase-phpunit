@@ -6,6 +6,7 @@ namespace Qase\PHPUnitReporter;
 
 use PHPUnit\Event\Code\TestMethod;
 use Qase\PhpCommons\Interfaces\ReporterInterface;
+use Qase\PhpCommons\Models\Attachment;
 use Qase\PhpCommons\Models\Result;
 use Qase\PHPUnitReporter\Attributes\AttributeParserInterface;
 
@@ -122,5 +123,36 @@ class QaseReporter implements QaseReporterInterface
         }
 
         $this->testResults[$this->currentKey]->message = $this->testResults[$this->currentKey]->message . $message . "\n";
+    }
+
+    public function addAttachment(mixed $input): void
+    {
+        if (!$this->currentKey) {
+            return;
+        }
+
+        if (is_string($input)) {
+            $this->testResults[$this->currentKey]->attachments[] = Attachment::createFileAttachment($input);
+            return;
+        }
+
+        if (is_array($input)) {
+            foreach ($input as $item) {
+                if (is_string($item)) {
+                    $this->testResults[$this->currentKey]->attachments[] = Attachment::createFileAttachment($item);
+                }
+            }
+
+            return;
+        }
+
+        if (is_object($input)) {
+            $data = (array)$input;
+            $this->testResults[$this->currentKey]->attachments[] = Attachment::createContentAttachment(
+                $data['title'] ?? 'attachment',
+                $data['content'] ?? null,
+                $data['mime'] ?? null
+            );
+        }
     }
 }
