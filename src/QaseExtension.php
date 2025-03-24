@@ -18,7 +18,7 @@ final class QaseExtension implements Extension
     public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
         $logger = new Logger();
-        $coreReporter = ReporterFactory::create();
+        $coreReporter = ReporterFactory::create("phpunit/phpunit", "qase/phpunit-reporter");
         $attributeReader = new AttributeReader();
         $attributeParser = new AttributeParser($logger, $attributeReader);
 
