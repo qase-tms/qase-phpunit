@@ -65,7 +65,11 @@ class AttributeParser implements AttributeParserInterface
             }
 
             if ($annotation instanceof QaseIdAttributeInterface) {
-                $metadata->qaseId = $annotation->getValue();
+                $metadata->qaseIds[] = $annotation->getValue();
+            }
+
+            if ($annotation instanceof QaseIdsAttributeInterface) {
+                $metadata->qaseIds = array_merge($metadata->qaseIds, $annotation->getValue());
             }
 
             if ($annotation instanceof SuiteAttributeInterface) {
