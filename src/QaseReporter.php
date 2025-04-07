@@ -56,7 +56,9 @@ class QaseReporter implements QaseReporterInterface
 
         $testResult = new Result();
 
-        $testResult->testOpsId = $metadata->qaseId;
+        if (!empty($metadata->qaseIds)) {
+            $testResult->testOpsIds = $metadata->qaseIds;
+        }
 
         if (empty($metadata->suites)) {
             $suites = explode('\\', $test->className());
