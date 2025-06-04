@@ -8,6 +8,7 @@ use PHPUnit\Event\Code\TestMethod;
 use Qase\PhpCommons\Interfaces\ReporterInterface;
 use Qase\PhpCommons\Models\Attachment;
 use Qase\PhpCommons\Models\Result;
+use Qase\PhpCommons\Utils\Signature;
 use Qase\PHPUnitReporter\Attributes\AttributeParserInterface;
 
 class QaseReporter implements QaseReporterInterface
@@ -73,7 +74,7 @@ class QaseReporter implements QaseReporterInterface
 
         $testResult->fields = $metadata->fields;
         $testResult->params = $metadata->parameters;
-        $testResult->signature = $this->createSignature($test);
+        $testResult->signature = $this->createSignature($test, $metadata->qaseIds, $metadata->suites, $metadata->parameters);
         $testResult->execution->setThread($this->getThread());
 
         $testResult->title = $metadata->title ?? $test->methodName();
@@ -108,9 +109,19 @@ class QaseReporter implements QaseReporterInterface
         return $test->className() . '::' . $test->methodName() . ':' . $test->line();
     }
 
-    private function createSignature(TestMethod $test): string
+    private function createSignature(TestMethod $test, ?array $ids = null, ?array $suites = null, ?array $params = null): string
     {
-        return str_replace("\\", "::", $test->className()) . '::' . $test->methodName() . ':' . $test->line();
+        $finalSuites = [];
+        if ($suites) {
+            $finalSuites = $suites;
+        } else {
+            $suites = explode('\\', $test->className());
+            foreach ($suites as $suite) {
+                $finalSuites[] = $suite;
+            }
+        }
+
+        return Signature::generateSignature($ids, $finalSuites, $params);
     }
 
     private function getThread(): string
