@@ -85,10 +85,15 @@ class QaseReporter implements QaseReporterInterface
     public function updateStatus(TestMethod $test, string $status, ?string $message = null, ?string $stackTrace = null): void
     {
         $key = $this->getTestKey($test);
+        if (!isset($this->testResults[$key])) {
+            // Optionally log or just bail out silently
+            return;
+        }
+
         $this->testResults[$key]->execution->setStatus($status);
 
         if ($message) {
-            $this->testResults[$key]->message = $this->testResults[$key]->message . "\n" . $message . "\n";
+            $this->testResults[$key]->message = ($this->testResults[$key]->message ?? '') . "\n" . $message . "\n";
         }
 
         if ($stackTrace) {
@@ -99,6 +104,10 @@ class QaseReporter implements QaseReporterInterface
     public function completeTest(TestMethod $test): void
     {
         $key = $this->getTestKey($test);
+        if (!isset($this->testResults[$key])) {
+            // Optionally log or bail
+            return;
+        }
         $this->testResults[$key]->execution->finish();
 
         $this->reporter->addResult($this->testResults[$key]);
