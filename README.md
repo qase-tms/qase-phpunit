@@ -30,6 +30,8 @@ You can also annotate tests with the IDs of existing test cases from Qase.io bef
 This is a more reliable way to bind automated tests to test cases, ensuring they persist when you rename, move, or
 parameterize your tests.
 
+For more information, refer to the [Usage Guide](docs/usage.md).
+
 For example:
 
 ```php
