@@ -154,6 +154,15 @@ class QaseReporter implements QaseReporterInterface
         $this->testResults[$this->currentKey]->message = $this->testResults[$this->currentKey]->message . $message . "\n";
     }
 
+    public function updateTitle(string $title): void
+    {
+        if (!$this->currentKey) {
+            return;
+        }
+
+        $this->testResults[$this->currentKey]->title = $title;
+    }
+
     public function addAttachment(mixed $input): void
     {
         if (!$this->currentKey) {
