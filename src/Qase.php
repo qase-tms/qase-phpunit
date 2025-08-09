@@ -24,6 +24,16 @@ class Qase
         $qr->addComment($message);
     }
 
+    public static function title(string $title): void
+    {
+        $qr = QaseReporter::getInstanceWithoutInit();
+        if (!$qr) {
+            return;
+        }
+
+        $qr->updateTitle($title);
+    }
+
     /* Add attachment to test case
      * @param mixed $input
      * @return void
