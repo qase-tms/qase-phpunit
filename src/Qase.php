@@ -24,6 +24,15 @@ class Qase
         $qr->addComment($message);
     }
 
+
+    /*
+     * Add title to test case
+     * @param string $title
+     * @return void
+     *
+     * Example:
+     * Qase::title("My title");
+     */
     public static function title(string $title): void
     {
         $qr = QaseReporter::getInstanceWithoutInit();
