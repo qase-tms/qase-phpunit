@@ -13,13 +13,13 @@ use Qase\PHPUnitReporter\Attributes\AttributeParserInterface;
 
 class QaseReporter implements QaseReporterInterface
 {
-    private static QaseReporter $instance;
-    private array $testResults = [];
-    private AttributeParserInterface $attributeParser;
-    private ReporterInterface $reporter;
-    private ?string $currentKey = null;
+    protected static QaseReporter $instance;
+    protected array $testResults = [];
+    protected AttributeParserInterface $attributeParser;
+    protected ReporterInterface $reporter;
+    protected ?string $currentKey = null;
 
-    private function __construct(AttributeParserInterface $attributeParser, ReporterInterface $reporter)
+    protected function __construct(AttributeParserInterface $attributeParser, ReporterInterface $reporter)
     {
         $this->attributeParser = $attributeParser;
         $this->reporter = $reporter;
@@ -105,7 +105,7 @@ class QaseReporter implements QaseReporterInterface
         }
     }
 
-    private function handleMessage(string $key, ?string $message): void
+    protected function handleMessage(string $key, ?string $message): void
     {
         if ($message) {
             $this->testResults[$key]->message = $this->testResults[$key]->message . "\n" . $message . "\n";
@@ -120,12 +120,12 @@ class QaseReporter implements QaseReporterInterface
         $this->reporter->addResult($this->testResults[$key]);
     }
 
-    private function getTestKey(TestMethod $test): string
+    protected function getTestKey(TestMethod $test): string
     {
         return $test->className() . '::' . $test->methodName() . ':' . $test->line();
     }
 
-    private function createSignature(TestMethod $test, ?array $ids = null, ?array $suites = null, ?array $params = null): string
+    protected function createSignature(TestMethod $test, ?array $ids = null, ?array $suites = null, ?array $params = null): string
     {
         $finalSuites = [];
         if ($suites) {
@@ -140,7 +140,7 @@ class QaseReporter implements QaseReporterInterface
         return Signature::generateSignature($ids, $finalSuites, $params);
     }
 
-    private function getThread(): string
+    protected function getThread(): string
     {
         return $_ENV['TEST_TOKEN'] ?? "default";
     }
