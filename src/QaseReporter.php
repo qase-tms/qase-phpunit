@@ -10,25 +10,30 @@ use Qase\PhpCommons\Models\Attachment;
 use Qase\PhpCommons\Models\Result;
 use Qase\PhpCommons\Utils\Signature;
 use Qase\PHPUnitReporter\Attributes\AttributeParserInterface;
+use Qase\PHPUnitReporter\Config\PhpUnitConfig;
 
 class QaseReporter implements QaseReporterInterface
 {
     protected static QaseReporter $instance;
     protected array $testResults = [];
-    protected AttributeParserInterface $attributeParser;
-    protected ReporterInterface $reporter;
     protected ?string $currentKey = null;
 
-    protected function __construct(AttributeParserInterface $attributeParser, ReporterInterface $reporter)
+    protected function __construct(
+        protected readonly AttributeParserInterface $attributeParser,
+        protected readonly ReporterInterface $reporter,
+        protected readonly PhpUnitConfig $config,
+    )
     {
-        $this->attributeParser = $attributeParser;
-        $this->reporter = $reporter;
     }
 
-    public static function getInstance(AttributeParserInterface $attributeParser, ReporterInterface $reporter): QaseReporter
+    public static function getInstance(
+        AttributeParserInterface $attributeParser,
+        ReporterInterface $reporter,
+        PhpUnitConfig $config,
+    ): QaseReporter
     {
         if (!isset(self::$instance)) {
-            self::$instance = new QaseReporter($attributeParser, $reporter);
+            self::$instance = new QaseReporter($attributeParser, $reporter, $config);
         }
         return self::$instance;
     }

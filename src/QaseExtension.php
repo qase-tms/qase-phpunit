@@ -17,12 +17,14 @@ final class QaseExtension implements Extension
 {
     public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
-        $logger = new Logger();
+        $configFactory = new Config\PhpUnitConfigFactory();
+        $config = $configFactory->create($parameters);
+        $logger = new Logger($config->debug);
         $coreReporter = ReporterFactory::create("phpunit/phpunit", "qase/phpunit-reporter");
         $attributeReader = new AttributeReader();
         $attributeParser = new AttributeParser($logger, $attributeReader);
 
-        $reporter = QaseReporter::getInstance($attributeParser, $coreReporter);
+        $reporter = QaseReporter::getInstance($attributeParser, $coreReporter, $config);
         
         $facade->registerSubscribers(
             new Events\TestConsideredRiskySubscriber($reporter),
