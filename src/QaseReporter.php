@@ -84,7 +84,7 @@ class QaseReporter implements QaseReporterInterface
         $testResult->signature = $this->createSignature($test, $metadata->qaseIds, $metadata->suites, $metadata->parameters);
         $testResult->execution->setThread($this->getThread());
 
-        $testResult->title = $metadata->title ?? $test->methodName();
+        $testResult->title = $metadata->title ?? $this->makeTestTitle($test);
 
         $this->currentKey = $key;
         $this->testResults[$key] = $testResult;
@@ -207,5 +207,22 @@ class QaseReporter implements QaseReporterInterface
                 $data['mime'] ?? null
             );
         }
+    }
+
+    protected function makeTestTitle(TestMethod $test): string
+    {
+        $method = $test->methodName();
+        if (!$this->config->formatTitleFromMethodName){
+            return $method;
+        }
+        if (str_starts_with($method, 'test')){
+            $method = substr($method, 4);
+        }
+        $words = array_map(
+            fn(string $word) => mb_convert_case($word, MB_CASE_TITLE, 'UTF-8'),
+            preg_split('/(?=\p{Lu})/u', $method, -1, PREG_SPLIT_NO_EMPTY),
+        );
+
+        return implode(' ', $words);
     }
 }

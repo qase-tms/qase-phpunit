@@ -22,7 +22,8 @@
   "require": {
     "php": "^8.1",
     "phpunit/phpunit": "^10 || ^11",
-    "qase/php-commons": "^2.1.1"
+    "qase/php-commons": "^2.1.1",
+    "ext-mbstring": "*"
   },
   "autoload": {
     "psr-4": {
