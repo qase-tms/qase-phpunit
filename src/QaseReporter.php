@@ -10,25 +10,30 @@ use Qase\PhpCommons\Models\Attachment;
 use Qase\PhpCommons\Models\Result;
 use Qase\PhpCommons\Utils\Signature;
 use Qase\PHPUnitReporter\Attributes\AttributeParserInterface;
+use Qase\PHPUnitReporter\Config\PhpUnitConfig;
 
 class QaseReporter implements QaseReporterInterface
 {
-    private static QaseReporter $instance;
-    private array $testResults = [];
-    private AttributeParserInterface $attributeParser;
-    private ReporterInterface $reporter;
-    private ?string $currentKey = null;
+    protected static QaseReporter $instance;
+    protected array $testResults = [];
+    protected ?string $currentKey = null;
 
-    private function __construct(AttributeParserInterface $attributeParser, ReporterInterface $reporter)
+    protected function __construct(
+        protected readonly AttributeParserInterface $attributeParser,
+        protected readonly ReporterInterface $reporter,
+        protected readonly PhpUnitConfig $config,
+    )
     {
-        $this->attributeParser = $attributeParser;
-        $this->reporter = $reporter;
     }
 
-    public static function getInstance(AttributeParserInterface $attributeParser, ReporterInterface $reporter): QaseReporter
+    public static function getInstance(
+        AttributeParserInterface $attributeParser,
+        ReporterInterface $reporter,
+        PhpUnitConfig $config,
+    ): QaseReporter
     {
         if (!isset(self::$instance)) {
-            self::$instance = new QaseReporter($attributeParser, $reporter);
+            self::$instance = new QaseReporter($attributeParser, $reporter, $config);
         }
         return self::$instance;
     }
@@ -51,7 +56,6 @@ class QaseReporter implements QaseReporterInterface
     public function startTest(TestMethod $test): void
     {
         $key = $this->getTestKey($test);
-        $this->currentKey = $key;
 
         $metadata = $this->attributeParser->parseAttribute($test->className(), $test->methodName());
 
@@ -62,6 +66,9 @@ class QaseReporter implements QaseReporterInterface
         }
 
         if (empty($metadata->suites)) {
+            if ($this->config->onlyReportTestsWithSuite){
+                return;
+            }
             $suites = explode('\\', $test->className());
             foreach ($suites as $suite) {
                 $testResult->relations->addSuite($suite);
@@ -77,8 +84,9 @@ class QaseReporter implements QaseReporterInterface
         $testResult->signature = $this->createSignature($test, $metadata->qaseIds, $metadata->suites, $metadata->parameters);
         $testResult->execution->setThread($this->getThread());
 
-        $testResult->title = $metadata->title ?? $test->methodName();
+        $testResult->title = $metadata->title ?? $this->makeTestTitle($test);
 
+        $this->currentKey = $key;
         $this->testResults[$key] = $testResult;
     }
 
@@ -87,13 +95,16 @@ class QaseReporter implements QaseReporterInterface
         $key = $this->getTestKey($test);
 
         if (!isset($this->testResults[$key])) {
+            if ($this->config->onlyReportTestsWithSuite){
+                return;
+            }
             $this->startTest($test);
             $this->testResults[$key]->execution->setStatus($status);
             $this->testResults[$key]->execution->finish();
 
             $this->handleMessage($key, $message);
             $this->reporter->addResult($this->testResults[$key]);
-            
+
             return;
         }
 
@@ -105,7 +116,7 @@ class QaseReporter implements QaseReporterInterface
         }
     }
 
-    private function handleMessage(string $key, ?string $message): void
+    protected function handleMessage(string $key, ?string $message): void
     {
         if ($message) {
             $this->testResults[$key]->message = $this->testResults[$key]->message . "\n" . $message . "\n";
@@ -115,17 +126,21 @@ class QaseReporter implements QaseReporterInterface
     public function completeTest(TestMethod $test): void
     {
         $key = $this->getTestKey($test);
+        if (!isset($this->testResults[$key])) {
+            return;
+        }
         $this->testResults[$key]->execution->finish();
 
         $this->reporter->addResult($this->testResults[$key]);
+        $this->currentKey = null;
     }
 
-    private function getTestKey(TestMethod $test): string
+    protected function getTestKey(TestMethod $test): string
     {
         return $test->className() . '::' . $test->methodName() . ':' . $test->line();
     }
 
-    private function createSignature(TestMethod $test, ?array $ids = null, ?array $suites = null, ?array $params = null): string
+    protected function createSignature(TestMethod $test, ?array $ids = null, ?array $suites = null, ?array $params = null): string
     {
         $finalSuites = [];
         if ($suites) {
@@ -140,7 +155,7 @@ class QaseReporter implements QaseReporterInterface
         return Signature::generateSignature($ids, $finalSuites, $params);
     }
 
-    private function getThread(): string
+    protected function getThread(): string
     {
         return $_ENV['TEST_TOKEN'] ?? "default";
     }
@@ -192,5 +207,22 @@ class QaseReporter implements QaseReporterInterface
                 $data['mime'] ?? null
             );
         }
+    }
+
+    protected function makeTestTitle(TestMethod $test): string
+    {
+        $method = $test->methodName();
+        if (!$this->config->formatTitleFromMethodName){
+            return $method;
+        }
+        if (str_starts_with($method, 'test')){
+            $method = substr($method, 4);
+        }
+        $words = array_map(
+            fn(string $word) => mb_convert_case($word, MB_CASE_TITLE, 'UTF-8'),
+            preg_split('/(?=\p{Lu})/u', $method, -1, PREG_SPLIT_NO_EMPTY),
+        );
+
+        return implode(' ', $words);
     }
 }

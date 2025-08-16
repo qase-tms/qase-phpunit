@@ -16,7 +16,11 @@ Add the following lines to the `phpunit.xml` file:
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="./vendor/autoload.php">
     <extensions>
-        <bootstrap class="Qase\PHPUnitReporter\QaseExtension"/>
+        <bootstrap class="Qase\PHPUnitReporter\QaseExtension">
+            <!-- optional parameters -->
+            <parameter name="onlyReportTestsWithSuite" value="true"/>
+            <parameter name="formatTitleFromMethodName" value="true"/>
+        </bootstrap>       
     </extensions>
 </phpunit>
 ```
@@ -116,6 +120,7 @@ Qase PHPUnit Reporter can be configured using:
 
 1. A separate configuration file qase.config.json.
 2. Environment variables (which override the values in the configuration file).
+3. Additional configuration options via phpunit.xml (`onlyReportTestsWithSuite` and `formatTitleFromMethodName` are currently supported)
 
 For a full list of configuration options, refer to
 the [Configuration Reference](https://github.com/qase-tms/qase-php-commons/blob/main/README.md#configuration).
