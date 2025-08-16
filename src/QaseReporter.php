@@ -56,7 +56,6 @@ class QaseReporter implements QaseReporterInterface
     public function startTest(TestMethod $test): void
     {
         $key = $this->getTestKey($test);
-        $this->currentKey = $key;
 
         $metadata = $this->attributeParser->parseAttribute($test->className(), $test->methodName());
 
@@ -67,6 +66,9 @@ class QaseReporter implements QaseReporterInterface
         }
 
         if (empty($metadata->suites)) {
+            if ($this->config->onlyReportTestsWithSuite){
+                return;
+            }
             $suites = explode('\\', $test->className());
             foreach ($suites as $suite) {
                 $testResult->relations->addSuite($suite);
@@ -84,6 +86,7 @@ class QaseReporter implements QaseReporterInterface
 
         $testResult->title = $metadata->title ?? $test->methodName();
 
+        $this->currentKey = $key;
         $this->testResults[$key] = $testResult;
     }
 
@@ -92,13 +95,16 @@ class QaseReporter implements QaseReporterInterface
         $key = $this->getTestKey($test);
 
         if (!isset($this->testResults[$key])) {
+            if ($this->config->onlyReportTestsWithSuite){
+                return;
+            }
             $this->startTest($test);
             $this->testResults[$key]->execution->setStatus($status);
             $this->testResults[$key]->execution->finish();
 
             $this->handleMessage($key, $message);
             $this->reporter->addResult($this->testResults[$key]);
-            
+
             return;
         }
 
@@ -120,6 +126,9 @@ class QaseReporter implements QaseReporterInterface
     public function completeTest(TestMethod $test): void
     {
         $key = $this->getTestKey($test);
+        if (!isset($this->testResults[$key])) {
+            return;
+        }
         $this->testResults[$key]->execution->finish();
 
         $this->reporter->addResult($this->testResults[$key]);
