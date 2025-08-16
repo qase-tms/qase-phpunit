@@ -118,6 +118,7 @@ class QaseReporter implements QaseReporterInterface
         $this->testResults[$key]->execution->finish();
 
         $this->reporter->addResult($this->testResults[$key]);
+        $this->currentKey = null;
     }
 
     protected function getTestKey(TestMethod $test): string
