@@ -8,6 +8,7 @@ use PHPUnit\Event\Code\TestMethod;
 use PHPUnit\Event\Test\MarkedIncomplete;
 use PHPUnit\Event\Test\MarkedIncompleteSubscriber;
 use Qase\PHPUnitReporter\QaseReporterInterface;
+use Qase\PHPUnitReporter\StatusDetector;
 
 final class TestMarkedIncompleteSubscriber implements MarkedIncompleteSubscriber
 {
@@ -28,6 +29,9 @@ final class TestMarkedIncompleteSubscriber implements MarkedIncompleteSubscriber
             return;
         }
 
-        $this->reporter->updateStatus($test, 'failed', $event->throwable()->message(), $event->throwable()->asString());
+        $throwable = $event->throwable();
+        $status = StatusDetector::getStatusForFailure($throwable);
+
+        $this->reporter->updateStatus($test, $status, $throwable->message(), $throwable->asString());
     }
 }

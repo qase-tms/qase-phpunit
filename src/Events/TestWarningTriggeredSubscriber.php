@@ -28,6 +28,6 @@ final class TestWarningTriggeredSubscriber implements WarningTriggeredSubscriber
             return;
         }
 
-        $this->reporter->updateStatus($test, 'failed', $event->message());
+        $this->reporter->updateStatus($test, 'invalid', $event->message());
     }
 }
