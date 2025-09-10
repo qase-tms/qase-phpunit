@@ -8,6 +8,7 @@ use PHPUnit\Event\Code\TestMethod;
 use PHPUnit\Event\Test\Errored;
 use PHPUnit\Event\Test\ErroredSubscriber;
 use Qase\PHPUnitReporter\QaseReporterInterface;
+use Qase\PHPUnitReporter\StatusDetector;
 
 final class TestErroredSubscriber implements ErroredSubscriber
 {
@@ -28,6 +29,9 @@ final class TestErroredSubscriber implements ErroredSubscriber
             return;
         }
 
-        $this->reporter->updateStatus($test, 'failed', $event->throwable()->message(), $event->throwable()->asString());
+        $throwable = $event->throwable();
+        $status = StatusDetector::getStatusForFailure($throwable);
+
+        $this->reporter->updateStatus($test, $status, $throwable->message(), $throwable->asString());
     }
 }
