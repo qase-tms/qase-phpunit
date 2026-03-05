@@ -439,15 +439,27 @@ class QaseReporter implements QaseReporterInterface
     }
 
     /**
-     * Convert any value to string for parameter representation
+     * Convert any value to string for parameter representation.
+     *
+     * The Qase API v2 requires that all parameter values are non-empty strings.
+     * Booleans must be handled before the generic is_scalar branch because
+     * PHP casts `false` to `""` (empty string), which the API rejects.
+     * Any other scalar that produces an empty string is substituted with
+     * the literal `"empty"`, consistent with how ResultSpecSerializer handles
+     * null/empty values in the file-reporter path.
      * 
      * @param mixed $value
      * @return string
      */
     private function convertValueToString(mixed $value): string
     {
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
         if (is_scalar($value)) {
-            return (string)$value;
+            $str = (string)$value;
+            return $str === '' ? 'empty' : $str;
         }
 
         if (is_array($value)) {
@@ -461,7 +473,7 @@ class QaseReporter implements QaseReporterInterface
             return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         }
 
-        return '';
+        return 'empty';
     }
 
     /**
