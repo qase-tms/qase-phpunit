@@ -1,0 +1,260 @@
+run:
+  stats:
+    passed: 20
+    failed: 1
+    skipped: 1
+    broken: 0
+    muted: 0
+    total: 22
+results:
+- title: Test simple data provider
+  signature: 21::dataprovidertest::{"param0":"value1"}
+  testops_ids:
+  - 21
+  status: passed
+  params:
+    param0: value1
+  relations:
+    suite:
+      data:
+      - title: DataProviderTest
+        public_id: null
+- title: testFail
+  signature: 3::exampletest
+  testops_ids:
+  - 3
+  status: failed
+  relations:
+    suite:
+      data:
+      - title: ExampleTest
+        public_id: null
+- title: Test simple data provider
+  signature: 21::dataprovidertest::{"param0":"value3"}
+  testops_ids:
+  - 21
+  status: passed
+  params:
+    param0: value3
+  relations:
+    suite:
+      data:
+      - title: DataProviderTest
+        public_id: null
+- title: Test associative data provider
+  signature: 22::dataprovidertest::{"param0":"{"browser":"firefox","version":"121"}"}
+  testops_ids:
+  - 22
+  status: passed
+  params:
+    param0: '{"browser":"firefox","version":"121"}'
+  relations:
+    suite:
+      data:
+      - title: DataProviderTest
+        public_id: null
+- title: Test version
+  signature: 20::dataprovidertest::{"version":"v2"}
+  testops_ids:
+  - 20
+  status: passed
+  params:
+    version: v2
+  relations:
+    suite:
+      data:
+      - title: DataProviderTest
+        public_id: null
+- title: testSkipped
+  signature: 2::exampletest
+  testops_ids:
+  - 2
+  status: skipped
+  relations:
+    suite:
+      data:
+      - title: ExampleTest
+        public_id: null
+- title: Custom title for test
+  signature: 13::attributetest
+  testops_ids:
+  - 13
+  status: passed
+  relations:
+    suite:
+      data:
+      - title: AttributeTest
+        public_id: null
+- title: testWithQaseId
+  signature: 10::attributetest
+  testops_ids:
+  - 10
+  status: passed
+  relations:
+    suite:
+      data:
+      - title: AttributeTest
+        public_id: null
+- title: testWithSuites
+  signature: 14::auth::login
+  testops_ids:
+  - 14
+  status: passed
+  relations:
+    suite:
+      data:
+      - title: Auth
+        public_id: null
+      - title: Login
+        public_id: null
+- title: testWithQaseIds
+  signature: 11-12::attributetest
+  testops_ids:
+  - 11
+  - 12
+  status: passed
+  relations:
+    suite:
+      data:
+      - title: AttributeTest
+        public_id: null
+- title: testSuccess
+  signature: 1::exampletest
+  testops_ids:
+  - 1
+  status: passed
+  relations:
+    suite:
+      data:
+      - title: ExampleTest
+        public_id: null
+- title: Overridden title at runtime
+  signature: 41::combinedtest
+  testops_ids:
+  - 41
+  status: passed
+  relations:
+    suite:
+      data:
+      - title: CombinedTest
+        public_id: null
+- title: Test simple data provider
+  signature: 21::dataprovidertest::{"param0":"value2"}
+  testops_ids:
+  - 21
+  status: passed
+  params:
+    param0: value2
+  relations:
+    suite:
+      data:
+      - title: DataProviderTest
+        public_id: null
+- title: Full attributes test
+  signature: 16::smoke
+  testops_ids:
+  - 16
+  status: passed
+  fields:
+    priority: high
+  relations:
+    suite:
+      data:
+      - title: Smoke
+        public_id: null
+- title: Test version
+  signature: 20::dataprovidertest::{"version":"v3"}
+  testops_ids:
+  - 20
+  status: passed
+  params:
+    version: v3
+  relations:
+    suite:
+      data:
+      - title: DataProviderTest
+        public_id: null
+- title: Test associative data provider
+  signature: 22::dataprovidertest::{"param0":"{"browser":"chrome","version":"120"}"}
+  testops_ids:
+  - 22
+  status: passed
+  params:
+    param0: '{"browser":"chrome","version":"120"}'
+  relations:
+    suite:
+      data:
+      - title: DataProviderTest
+        public_id: null
+- title: testWithComment
+  signature: 40::combinedtest
+  testops_ids:
+  - 40
+  status: passed
+  relations:
+    suite:
+      data:
+      - title: CombinedTest
+        public_id: null
+- title: testFileAttachment
+  signature: 30::attachmenttest
+  testops_ids:
+  - 30
+  status: passed
+  relations:
+    suite:
+      data:
+      - title: AttachmentTest
+        public_id: null
+  attachments:
+  - {}
+- title: testContentAttachment
+  signature: 31::attachmenttest
+  testops_ids:
+  - 31
+  status: passed
+  relations:
+    suite:
+      data:
+      - title: AttachmentTest
+        public_id: null
+  attachments:
+  - file_name: log.json
+    mime_type: application/json
+- title: testWithSuiteAndField
+  signature: 42::integration
+  testops_ids:
+  - 42
+  status: passed
+  fields:
+    component: auth
+  relations:
+    suite:
+      data:
+      - title: Integration
+        public_id: null
+- title: testWithFields
+  signature: 15::attributetest
+  testops_ids:
+  - 15
+  status: passed
+  fields:
+    severity: critical
+    layer: unit
+  relations:
+    suite:
+      data:
+      - title: AttributeTest
+        public_id: null
+- title: Test version
+  signature: 20::dataprovidertest::{"version":"v1"}
+  testops_ids:
+  - 20
+  status: passed
+  params:
+    version: v1
+  relations:
+    suite:
+      data:
+      - title: DataProviderTest
+        public_id: null

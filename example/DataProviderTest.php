@@ -5,13 +5,11 @@ declare(strict_types=1);
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Qase\PHPUnitReporter\Attributes\Parameter;
+use Qase\PHPUnitReporter\Attributes\QaseId;
 use Qase\PHPUnitReporter\Attributes\Title;
 
 class DataProviderTest extends TestCase
 {
-    /**
-     * Return a list of versions to test
-     */
     public static function getProviderData(): array
     {
         return [
@@ -22,6 +20,7 @@ class DataProviderTest extends TestCase
     }
 
     #[
+        QaseId(20),
         DataProvider('getProviderData'),
         Parameter('version', ''),
         Title("Test version")
@@ -31,9 +30,6 @@ class DataProviderTest extends TestCase
         $this->assertStringContainsString('v', $version, "Version includes v");
     }
 
-    /**
-     * Simple data provider with indexed array
-     */
     public static function getSimpleData(): array
     {
         return [
@@ -44,6 +40,7 @@ class DataProviderTest extends TestCase
     }
 
     #[
+        QaseId(21),
         DataProvider('getSimpleData'),
         Title("Test simple data provider")
     ]
@@ -52,18 +49,16 @@ class DataProviderTest extends TestCase
         $this->assertNotEmpty($value);
     }
 
-    /**
-     * Data provider with associative array
-     */
     public static function getAssociativeData(): array
     {
         return [
-            ['browser' => 'chrome', 'version' => '120'],
-            ['browser' => 'firefox', 'version' => '121'],
+            [['browser' => 'chrome', 'version' => '120']],
+            [['browser' => 'firefox', 'version' => '121']],
         ];
     }
 
     #[
+        QaseId(22),
         DataProvider('getAssociativeData'),
         Title("Test associative data provider")
     ]
@@ -73,4 +68,3 @@ class DataProviderTest extends TestCase
         $this->assertArrayHasKey('version', $data);
     }
 }
-
