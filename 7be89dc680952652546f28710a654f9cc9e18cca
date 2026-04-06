@@ -1,0 +1,39 @@
+.github/workflows/php.yml
+  579c1bfe8645329a 33-74
+example/AttributeTest.php
+  579c1bfe8645329a 1-58
+example/DataProviderTest.php
+  579c1bfe8645329a 8,23,43,55-56,61
+example/testdata/sample.txt
+  579c1bfe8645329a 1
+scripts/clean_expected.py
+  579c1bfe8645329a 1-117
+example/CombinedTest.php
+  579c1bfe8645329a 1-32
+example/phpunit-integration.xml
+  579c1bfe8645329a 1-15
+example/ExampleTest.php
+  579c1bfe8645329a 6,10,16,19,22
+example/AttachmentTest.php
+  579c1bfe8645329a 1-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "7be89dc680952652546f28710a654f9cc9e18cca",
+  "prompts": {
+    "579c1bfe8645329a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "87b5518d-030f-4930-9bdf-ffcdd621f567",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Dmitrii Gridnev",
+      "messages": [],
+      "total_additions": 1023,
+      "total_deletions": 14,
+      "accepted_lines": 1023,
+      "overriden_lines": 0
+    }
+  }
+}
