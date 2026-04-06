@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="../vendor/autoload.php">
+    <extensions>
+        <bootstrap class="Qase\PHPUnitReporter\QaseExtension"/>
+    </extensions>
+    <testsuites>
+        <testsuite name="integration">
+            <file>ExampleTest.php</file>
+            <file>DataProviderTest.php</file>
+            <file>AttributeTest.php</file>
+            <file>AttachmentTest.php</file>
+            <file>CombinedTest.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>

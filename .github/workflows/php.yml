@@ -30,3 +30,45 @@ jobs:
 
       - name: Run tests
         run: vendor/bin/phpunit
+
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl
+          tools: composer:v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Install reporters-validator
+        run: pip install git+https://github.com/qase-tms/reporters-validator.git
+
+      - name: Download report schemas
+        run: git clone --depth 1 https://github.com/qase-tms/specs.git /tmp/specs
+
+      - name: Run example tests in report mode
+        run: |
+          QASE_MODE=report \
+          QASE_REPORT_CONNECTION_PATH=${{ github.workspace }}/build/report \
+          vendor/bin/phpunit -c example/phpunit-integration.xml || true
+
+      - name: Validate PHPUnit reporter
+        run: |
+          reporters-validator validate \
+            --report-dir ${{ github.workspace }}/build/report \
+            --expected expected/phpunit-examples.yaml \
+            --schema-dir /tmp/specs/report/schemas
