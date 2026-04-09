@@ -9,4 +9,5 @@ class Metadata
     public array $suites = [];
     public array $parameters = [];
     public array $fields = [];
+    public array $tags = [];
 }

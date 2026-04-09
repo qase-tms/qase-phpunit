@@ -10,6 +10,7 @@ This guide covers all available annotations and methods for using the Qase PHPUn
   - [Title](#title)
   - [Suite](#suite)
   - [Field](#field)
+  - [Tags](#tags)
   - [Parameter](#parameter)
 - [Methods](#methods)
   - [Qase::comment()](#qasecomment)
@@ -119,6 +120,48 @@ public function testUserLogin(): void
 }
 ```
 
+### Tags
+
+Adds tags to the test case in Qase.
+
+**Target:** Method and Class
+**Repeatable:** Yes
+
+```php
+use Qase\PHPUnitReporter\Attributes\Tags;
+
+// Single attribute with multiple tags
+#[Tags('smoke', 'regression')]
+public function testUserLogin(): void
+{
+    // Test implementation
+}
+
+// Multiple Tags attributes (accumulated)
+#[Tags('smoke')]
+#[Tags('regression')]
+public function testUserLogin(): void
+{
+    // Test implementation
+}
+
+// Class-level + method-level (merged)
+#[Tags('smoke')]
+class AuthTest extends TestCase
+{
+    #[Tags('regression')]
+    public function testLogin(): void
+    {
+        // This test will have tags: ['smoke', 'regression']
+    }
+
+    public function testLogout(): void
+    {
+        // This test will have tags: ['smoke']
+    }
+}
+```
+
 ### Parameter
 
 Adds parameters to the test case in Qase.
@@ -215,6 +258,7 @@ use Qase\PHPUnitReporter\Attributes\Field;
 use Qase\PHPUnitReporter\Attributes\Parameter;
 use Qase\PHPUnitReporter\Attributes\QaseId;
 use Qase\PHPUnitReporter\Attributes\Suite;
+use Qase\PHPUnitReporter\Attributes\Tags;
 use Qase\PHPUnitReporter\Attributes\Title;
 use Qase\PHPUnitReporter\Qase;
 
@@ -291,22 +335,25 @@ namespace Tests;
 use PHPUnit\Framework\TestCase;
 use Qase\PHPUnitReporter\Attributes\Field;
 use Qase\PHPUnitReporter\Attributes\Suite;
+use Qase\PHPUnitReporter\Attributes\Tags;
 
 #[
     Suite('API Tests'),
     Field('environment', 'staging'),
-    Field('api_version', 'v2')
+    Field('api_version', 'v2'),
+    Tags('smoke')
 ]
 class ApiTest extends TestCase
 {
-    // All test methods inherit the suite and fields from class annotations
-    
+    // All test methods inherit the suite, fields, and tags from class annotations
+
     public function testGetUser(): void
     {
         // This test will be assigned to 'API Tests' suite
         // and have environment=staging, api_version=v2 fields
+        // and tags: ['smoke']
     }
-    
+
     public function testCreateUser(): void
     {
         // Same inheritance applies here
@@ -379,6 +426,8 @@ public function testWithEvidence(): void
 ### 6. Combine Annotations Effectively
 
 ```php
+use Qase\PHPUnitReporter\Attributes\Tags;
+
 #[
     QaseId(123),
     Title('User Login with Valid Credentials'),
@@ -386,6 +435,7 @@ public function testWithEvidence(): void
     Suite('Smoke Tests'),
     Field('severity', 'high'),
     Field('priority', 'P1'),
+    Tags('smoke'),
     Parameter('browser', 'chrome'),
     Parameter('environment', 'staging')
 ]

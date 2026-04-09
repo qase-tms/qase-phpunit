@@ -80,6 +80,7 @@ results:
   testops_ids:
   - 13
   status: passed
+  tags: smoke
   relations:
     suite:
       data:
@@ -90,6 +91,7 @@ results:
   testops_ids:
   - 10
   status: passed
+  tags: smoke
   relations:
     suite:
       data:
@@ -100,6 +102,7 @@ results:
   testops_ids:
   - 14
   status: passed
+  tags: smoke
   relations:
     suite:
       data:
@@ -113,6 +116,7 @@ results:
   - 11
   - 12
   status: passed
+  tags: smoke
   relations:
     suite:
       data:
@@ -157,6 +161,7 @@ results:
   status: passed
   fields:
     priority: high
+  tags: smoke,regression
   relations:
     suite:
       data:
@@ -241,6 +246,7 @@ results:
   fields:
     severity: critical
     layer: unit
+  tags: smoke
   relations:
     suite:
       data:
