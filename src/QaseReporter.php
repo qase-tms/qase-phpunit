@@ -79,6 +79,7 @@ class QaseReporter implements QaseReporterInterface
         }
 
         $testResult->fields = $metadata->fields;
+        $testResult->tags = $metadata->tags;
         $testResult->params = $mergedParams;
         $testResult->signature = $this->createSignature($test, $metadata->qaseIds, $metadata->suites, $mergedParams);
         $testResult->execution->setThread($this->getThread());

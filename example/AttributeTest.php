@@ -7,8 +7,10 @@ use Qase\PHPUnitReporter\Attributes\Field;
 use Qase\PHPUnitReporter\Attributes\QaseId;
 use Qase\PHPUnitReporter\Attributes\QaseIds;
 use Qase\PHPUnitReporter\Attributes\Suite;
+use Qase\PHPUnitReporter\Attributes\Tags;
 use Qase\PHPUnitReporter\Attributes\Title;
 
+#[Tags("smoke")]
 class AttributeTest extends TestCase
 {
     #[QaseId(10)]
@@ -49,7 +51,8 @@ class AttributeTest extends TestCase
         QaseId(16),
         Title("Full attributes test"),
         Suite("Smoke"),
-        Field("priority", "high")
+        Field("priority", "high"),
+        Tags("regression")
     ]
     public function testWithAllAttributes(): void
     {

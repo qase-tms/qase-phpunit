@@ -83,6 +83,10 @@ class AttributeParser implements AttributeParserInterface
             if ($annotation instanceof ParameterAttributeInterface) {
                 $metadata->parameters[$annotation->getName()] = $annotation->getValue();
             }
+
+            if ($annotation instanceof TagsAttributeInterface) {
+                $metadata->tags = array_merge($metadata->tags, $annotation->getTags());
+            }
         }
 
         return $metadata;
