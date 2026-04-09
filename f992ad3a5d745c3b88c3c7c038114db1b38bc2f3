@@ -1,0 +1,36 @@
+expected/phpunit-examples.yaml
+  5a5b994b12f18d0f 83,94,105,119,164,249
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "f992ad3a5d745c3b88c3c7c038114db1b38bc2f3",
+  "prompts": {
+    "579c1bfe8645329a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "87b5518d-030f-4930-9bdf-ffcdd621f567",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Dmitrii Gridnev",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 719,
+      "overriden_lines": 0
+    },
+    "5a5b994b12f18d0f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "389bcca0-b191-4168-99c9-88ce7e8f955c",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Dmitrii Gridnev",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 13,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    }
+  }
+}
