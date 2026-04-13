@@ -1,0 +1,23 @@
+src/QaseReporter.php
+  77eeb48b1d6daaac 125-129,135-147,151-160,162
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "5f4854e97b5dd1804d9bc0848aa661063335b9e1",
+  "prompts": {
+    "77eeb48b1d6daaac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a5aaf29-033a-43be-b2be-73d927cdcd32",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Dmitrii Gridnev",
+      "messages": [],
+      "total_additions": 531,
+      "total_deletions": 19,
+      "accepted_lines": 531,
+      "overriden_lines": 0
+    }
+  }
+}
