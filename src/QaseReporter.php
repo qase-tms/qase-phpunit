@@ -122,22 +122,44 @@ class QaseReporter implements QaseReporterInterface
     public function completeTest(TestMethod $test): void
     {
         $key = $this->getTestKey($test);
+
+        if (!isset($this->testResults[$key])) {
+            $this->startTest($test);
+        }
+
         $this->testResults[$key]->execution->finish();
 
         $this->reporter->addResult($this->testResults[$key]);
     }
 
+    /**
+     * Build a stable, deterministic key for a test invocation.
+     *
+     * Uses only native PHPUnit stable data (className, methodName, line
+     * and the data set name exposed by the public testData() API).
+     * This intentionally avoids reflection/invocation of the data
+     * provider method here, because those can produce different
+     * results between consecutive calls under paratest +
+     * XDEBUG_MODE=coverage (or PHP 8.4 deprecations), which used to
+     * cause the key computed in startTest() to differ from the key
+     * computed later in updateStatus()/completeTest() and ended up
+     * dereferencing a null Result/execution.
+     */
     private function getTestKey(TestMethod $test): string
     {
         $baseKey = $test->className() . '::' . $test->methodName() . ':' . $test->line();
-        
-        // Include data provider data in key to make each iteration unique
-        $dataProviderParams = $this->extractDataProviderParams($test);
-        if (!empty($dataProviderParams)) {
-            $paramsHash = $this->generateParamsHash($dataProviderParams);
-            return $baseKey . ':' . $paramsHash;
+
+        try {
+            $testData = $test->testData();
+            if (method_exists($testData, 'hasDataFromDataProvider')
+                && $testData->hasDataFromDataProvider()) {
+                $dataSetName = $testData->dataFromDataProvider()->dataSetName();
+                return $baseKey . '#' . $dataSetName;
+            }
+        } catch (\Throwable $e) {
+            // Fall through to the base key.
         }
-        
+
         return $baseKey;
     }
 
@@ -477,16 +499,4 @@ class QaseReporter implements QaseReporterInterface
         return 'empty';
     }
 
-    /**
-     * Generate a hash from parameters for use in test key
-     * 
-     * @param array<string, string> $params
-     * @return string
-     */
-    private function generateParamsHash(array $params): string
-    {
-        ksort($params);
-        $paramString = http_build_query($params);
-        return md5($paramString);
-    }
 }
