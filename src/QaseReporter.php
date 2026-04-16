@@ -20,6 +20,7 @@ class QaseReporter implements QaseReporterInterface
     private AttributeParserInterface $attributeParser;
     private ReporterInterface $reporter;
     private ?string $currentKey = null;
+    private bool $runStarted = false;
 
     private function __construct(AttributeParserInterface $attributeParser, ReporterInterface $reporter)
     {
@@ -42,12 +43,25 @@ class QaseReporter implements QaseReporterInterface
 
     public function startTestRun(): void
     {
+        if ($this->runStarted) {
+            return;
+        }
+
         $this->reporter->startRun();
+        $this->runStarted = true;
+
+        register_shutdown_function(function () {
+            $this->reporter->completeRun();
+        });
     }
 
     public function completeTestRun(): void
     {
-        $this->reporter->completeRun();
+        // No-op: completeRun() is deferred to the shutdown function.
+        // This prevents paratest's WrapperRunner from calling
+        // startRun/completeRun per test file instead of per worker process,
+        // which causes StateManager count to fluctuate and prematurely
+        // complete the run.
     }
 
     public function startTest(TestMethod $test): void
@@ -97,13 +111,6 @@ class QaseReporter implements QaseReporterInterface
 
         if (!isset($this->testResults[$key])) {
             $this->startTest($test);
-            $this->testResults[$key]->execution->setStatus($status);
-            $this->testResults[$key]->execution->finish();
-
-            $this->handleMessage($key, $message);
-            $this->reporter->addResult($this->testResults[$key]);
-            
-            return;
         }
 
         $this->testResults[$key]->execution->setStatus($status);
@@ -177,7 +184,14 @@ class QaseReporter implements QaseReporterInterface
             }
         }
 
-        return Signature::generateSignature($ids, $finalSuites, $params);
+        $signature = Signature::generateSignature($ids, $finalSuites, $params);
+
+        $dataSetName = $this->getCurrentDataSetName($test);
+        if ($dataSetName !== null) {
+            $signature .= '::' . $dataSetName;
+        }
+
+        return $signature;
     }
 
     private function getThread(): string
