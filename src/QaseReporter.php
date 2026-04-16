@@ -21,6 +21,7 @@ class QaseReporter implements QaseReporterInterface
     private ReporterInterface $reporter;
     private ?string $currentKey = null;
     private bool $runStarted = false;
+    private array $reportedKeys = [];
 
     private function __construct(AttributeParserInterface $attributeParser, ReporterInterface $reporter)
     {
@@ -57,11 +58,25 @@ class QaseReporter implements QaseReporterInterface
 
     public function completeTestRun(): void
     {
-        // No-op: completeRun() is deferred to the shutdown function.
-        // This prevents paratest's WrapperRunner from calling
-        // startRun/completeRun per test file instead of per worker process,
-        // which causes StateManager count to fluctuate and prematurely
-        // complete the run.
+        // Report tests that never received a TestFinished event.
+        // In PHPUnit 12, tests that error during setUp() may not dispatch
+        // TestFinished, leaving results in $testResults but never sent.
+        // Their execution time was already stamped by updateStatus().
+        foreach ($this->testResults as $key => $result) {
+            if (!isset($this->reportedKeys[$key])) {
+                $this->reporter->addResult($result);
+                $this->reportedKeys[$key] = true;
+            }
+        }
+
+        // Flush buffered results without completing the run.
+        // completeRun() is deferred to the shutdown function to prevent
+        // paratest's WrapperRunner from calling startRun/completeRun per
+        // test file, which causes StateManager count to prematurely reach
+        // zero and split results across multiple runs.
+        if (method_exists($this->reporter, 'sendResults')) {
+            $this->reporter->sendResults();
+        }
     }
 
     public function startTest(TestMethod $test): void
@@ -114,6 +129,7 @@ class QaseReporter implements QaseReporterInterface
         }
 
         $this->testResults[$key]->execution->setStatus($status);
+        $this->testResults[$key]->execution->finish();
         $this->handleMessage($key, $message);
 
         if ($stackTrace) {
@@ -139,6 +155,7 @@ class QaseReporter implements QaseReporterInterface
         $this->testResults[$key]->execution->finish();
 
         $this->reporter->addResult($this->testResults[$key]);
+        $this->reportedKeys[$key] = true;
     }
 
     /**
