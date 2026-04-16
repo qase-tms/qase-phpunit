@@ -180,7 +180,12 @@ class QaseReporter implements QaseReporterInterface
 
     private function getThread(): string
     {
-        return $_ENV['TEST_TOKEN'] ?? "default";
+        $token = getenv("TEST_TOKEN");
+        if ($token !== false && $token !== "") {
+            return (string) $token;
+        }
+
+        return "default";
     }
 
     public function addComment(string $message): void
