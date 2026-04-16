@@ -69,14 +69,10 @@ class QaseReporter implements QaseReporterInterface
             }
         }
 
-        // Flush buffered results without completing the run.
-        // completeRun() is deferred to the shutdown function to prevent
-        // paratest's WrapperRunner from calling startRun/completeRun per
-        // test file, which causes StateManager count to prematurely reach
-        // zero and split results across multiple runs.
-        if (method_exists($this->reporter, 'sendResults')) {
-            $this->reporter->sendResults();
-        }
+        // Results are flushed by completeRun() in the shutdown function.
+        // We intentionally do NOT call sendResults() here because
+        // FileReporter.sendResults() does not clear its buffer,
+        // causing results to be written twice.
     }
 
     public function startTest(TestMethod $test): void

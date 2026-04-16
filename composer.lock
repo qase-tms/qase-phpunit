@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe29c8af864ff1a3cefe277987eba3dc",
+    "content-hash": "db6f54b5476a7c54c78a5770d4087fdf",
     "packages": [
         {
             "name": "brick/math",
@@ -1220,16 +1220,16 @@
         },
         {
             "name": "qase/php-commons",
-            "version": "2.1.18",
+            "version": "2.1.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/qase-tms/qase-php-commons.git",
-                "reference": "ca0459b6b97a7810a7aa1db15297f864827556d0"
+                "reference": "6dfc55b5d9428ec3cbded48ea4d35c7cbf8ea314"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/qase-tms/qase-php-commons/zipball/ca0459b6b97a7810a7aa1db15297f864827556d0",
-                "reference": "ca0459b6b97a7810a7aa1db15297f864827556d0",
+                "url": "https://api.github.com/repos/qase-tms/qase-php-commons/zipball/6dfc55b5d9428ec3cbded48ea4d35c7cbf8ea314",
+                "reference": "6dfc55b5d9428ec3cbded48ea4d35c7cbf8ea314",
                 "shasum": ""
             },
             "require": {
@@ -1269,9 +1269,9 @@
             ],
             "support": {
                 "issues": "https://github.com/qase-tms/qase-php-commons/issues",
-                "source": "https://github.com/qase-tms/qase-php-commons/tree/v2.1.18"
+                "source": "https://github.com/qase-tms/qase-php-commons/tree/v2.1.20"
             },
-            "time": "2026-04-09T08:02:34+00:00"
+            "time": "2026-04-16T11:00:48+00:00"
         },
         {
             "name": "qase/qase-api-client",

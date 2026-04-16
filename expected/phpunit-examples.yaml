@@ -8,7 +8,7 @@ run:
     total: 22
 results:
 - title: Test simple data provider
-  signature: 21::dataprovidertest::{"param0":"value1"}
+  signature: 21::dataprovidertest::{"param0":"value1"}::0
   testops_ids:
   - 21
   status: passed
@@ -30,7 +30,7 @@ results:
       - title: ExampleTest
         public_id: null
 - title: Test simple data provider
-  signature: 21::dataprovidertest::{"param0":"value3"}
+  signature: 21::dataprovidertest::{"param0":"value3"}::2
   testops_ids:
   - 21
   status: passed
@@ -42,7 +42,7 @@ results:
       - title: DataProviderTest
         public_id: null
 - title: Test associative data provider
-  signature: 22::dataprovidertest::{"param0":"{"browser":"firefox","version":"121"}"}
+  signature: 22::dataprovidertest::{"param0":"{"browser":"firefox","version":"121"}"}::1
   testops_ids:
   - 22
   status: passed
@@ -54,7 +54,7 @@ results:
       - title: DataProviderTest
         public_id: null
 - title: Test version
-  signature: 20::dataprovidertest::{"version":"v2"}
+  signature: 20::dataprovidertest::{"version":"v2"}::v2
   testops_ids:
   - 20
   status: passed
@@ -143,7 +143,7 @@ results:
       - title: CombinedTest
         public_id: null
 - title: Test simple data provider
-  signature: 21::dataprovidertest::{"param0":"value2"}
+  signature: 21::dataprovidertest::{"param0":"value2"}::1
   testops_ids:
   - 21
   status: passed
@@ -168,7 +168,7 @@ results:
       - title: Smoke
         public_id: null
 - title: Test version
-  signature: 20::dataprovidertest::{"version":"v3"}
+  signature: 20::dataprovidertest::{"version":"v3"}::v3
   testops_ids:
   - 20
   status: passed
@@ -180,7 +180,7 @@ results:
       - title: DataProviderTest
         public_id: null
 - title: Test associative data provider
-  signature: 22::dataprovidertest::{"param0":"{"browser":"chrome","version":"120"}"}
+  signature: 22::dataprovidertest::{"param0":"{"browser":"chrome","version":"120"}"}::0
   testops_ids:
   - 22
   status: passed
@@ -253,7 +253,7 @@ results:
       - title: AttributeTest
         public_id: null
 - title: Test version
-  signature: 20::dataprovidertest::{"version":"v1"}
+  signature: 20::dataprovidertest::{"version":"v1"}::v1
   testops_ids:
   - 20
   status: passed
