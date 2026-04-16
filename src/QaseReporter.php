@@ -269,14 +269,17 @@ class QaseReporter implements QaseReporterInterface
 
                 return $normalized;
             }
-            return [];
         } catch (\Throwable $e) {
-            $dataSetName = $this->getCurrentDataSetName($test);
-            if ($dataSetName !== null) {
-                return ['dataset' => (string) $dataSetName];
-            }
-            return [];
+            // Provider invocation failed (e.g. requires app container).
         }
+
+        // Fallback: provider returned null or threw — use dataset name to keep variants unique.
+        $dataSetName = $this->getCurrentDataSetName($test);
+        if ($dataSetName !== null) {
+            return ['dataset' => (string) $dataSetName];
+        }
+
+        return [];
     }
 
     /**
