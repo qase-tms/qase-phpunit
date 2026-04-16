@@ -271,6 +271,10 @@ class QaseReporter implements QaseReporterInterface
             }
             return [];
         } catch (\Throwable $e) {
+            $dataSetName = $this->getCurrentDataSetName($test);
+            if ($dataSetName !== null) {
+                return ['dataset' => (string) $dataSetName];
+            }
             return [];
         }
     }
