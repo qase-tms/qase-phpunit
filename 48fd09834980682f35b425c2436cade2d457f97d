@@ -1,0 +1,23 @@
+src/QaseReporter.php
+  672711893ff1cade 183-194
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "48fd09834980682f35b425c2436cade2d457f97d",
+  "prompts": {
+    "672711893ff1cade": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f9493fd0-81f2-4db8-b601-95a3e60220a2",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Ruslan Abelkharisov",
+      "messages": [],
+      "total_additions": 12,
+      "total_deletions": 1,
+      "accepted_lines": 12,
+      "overriden_lines": 0
+    }
+  }
+}
