@@ -1,0 +1,38 @@
+src/QaseReporter.php
+  58d1423f35d0d78e 16-17,185-190,253-272,290-291,294,299-308,310-311,318-320,322,324,326,332,336-337,356-360,525
+composer.json
+  58d1423f35d0d78e 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "461db5c7151c1327772b476c1ff506164cc20730",
+  "prompts": {
+    "58d1423f35d0d78e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "88ca6859-b8ff-4514-a13e-8445e4bc039c",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Dmitrii Gridnev",
+      "messages": [],
+      "total_additions": 60,
+      "total_deletions": 20,
+      "accepted_lines": 60,
+      "overriden_lines": 0
+    },
+    "77eeb48b1d6daaac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a5aaf29-033a-43be-b2be-73d927cdcd32",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Dmitrii Gridnev",
+      "messages": [],
+      "total_additions": 502,
+      "total_deletions": 0,
+      "accepted_lines": 483,
+      "overriden_lines": 15
+    }
+  }
+}
