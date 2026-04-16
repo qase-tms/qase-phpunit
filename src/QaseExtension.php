@@ -24,19 +24,25 @@ final class QaseExtension implements Extension
 
         $reporter = QaseReporter::getInstance($attributeParser, $coreReporter);
         
-        $facade->registerSubscribers(
-            new Events\TestConsideredRiskySubscriber($reporter),
+        $subscribers = [
+            new Events\TestRunnerStartedSubscriber($reporter),
             new Events\TestPreparedSubscriber($reporter),
-            new Events\TestFinishedSubscriber($reporter),
+            new Events\TestPassedSubscriber($reporter),
             new Events\TestFailedSubscriber($reporter),
             new Events\TestErroredSubscriber($reporter),
-            new Events\TestMarkedIncompleteSubscriber($reporter),
             new Events\TestSkippedSubscriber($reporter),
-            new Events\TestWarningTriggeredSubscriber($reporter),
+            new Events\TestMarkedIncompleteSubscriber($reporter),
             new Events\TestConsideredRiskySubscriber($reporter),
-            new Events\TestPassedSubscriber($reporter),
+            new Events\TestWarningTriggeredSubscriber($reporter),
+            new Events\TestFinishedSubscriber($reporter),
             new Events\TestRunnerFinishedSubscriber($reporter),
-            new Events\TestRunnerStartedSubscriber($reporter),
-        );
+        ];
+
+        // PreparationErrored is available in PHPUnit 11.4+/12+
+        if (interface_exists(\PHPUnit\Event\Test\PreparationErroredSubscriber::class)) {
+            $subscribers[] = new Events\TestPreparationErroredSubscriber($reporter);
+        }
+
+        $facade->registerSubscribers(...$subscribers);
     }
 }
