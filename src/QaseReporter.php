@@ -270,7 +270,6 @@ class QaseReporter implements QaseReporterInterface
                 return $normalized;
             }
         } catch (\Throwable $e) {
-            // Provider invocation failed (e.g. requires app container).
         }
 
         // Fallback: provider returned null or threw — use dataset name to keep variants unique.
@@ -292,22 +291,28 @@ class QaseReporter implements QaseReporterInterface
     private function getOriginalDataProviderData(TestMethod $test): ?array
     {
         try {
-            $dataProviderMethodName = $this->getDataProviderMethodName($test);
-            if ($dataProviderMethodName === null) {
+            $providerNames = $this->getDataProviderMethodNames($test);
+            if (empty($providerNames)) {
                 return null;
             }
-            
-            $allDataSets = $this->invokeDataProviderMethod($test->className(), $dataProviderMethodName);
-            if (!is_array($allDataSets)) {
-                return null;
-            }
-            
+
             $dataSetName = $this->getCurrentDataSetName($test);
             if ($dataSetName === null) {
                 return null;
             }
-            
-            return $this->findDataSet($allDataSets, $dataSetName);
+
+            foreach ($providerNames as $providerName) {
+                $allDataSets = $this->invokeDataProviderMethod($test->className(), $providerName);
+                if (!is_array($allDataSets)) {
+                    continue;
+                }
+                $found = $this->findDataSet($allDataSets, $dataSetName);
+                if ($found !== null) {
+                    return $found;
+                }
+            }
+
+            return null;
         } catch (\Throwable $e) {
             return null;
         }
@@ -316,21 +321,25 @@ class QaseReporter implements QaseReporterInterface
     /**
      * Get data provider method name from test method attributes
      */
-    private function getDataProviderMethodName(TestMethod $test): ?string
+    /**
+     * @return string[]
+     */
+    private function getDataProviderMethodNames(TestMethod $test): array
     {
+        $names = [];
         $testReflection = new \ReflectionMethod($test->className(), $test->methodName());
-        
+
         foreach ($testReflection->getAttributes() as $attribute) {
             $attributeName = $attribute->getName();
             if (strpos($attributeName, 'DataProvider') !== false) {
                 $args = $attribute->getArguments();
                 if (!empty($args) && is_string($args[0])) {
-                    return $args[0];
+                    $names[] = $args[0];
                 }
             }
         }
-        
-        return null;
+
+        return $names;
     }
 
     /**
