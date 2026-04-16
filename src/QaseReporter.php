@@ -323,6 +323,11 @@ class QaseReporter implements QaseReporterInterface
         }
         
         $result = $method->invoke(null);
+
+        if ($result instanceof \Traversable) {
+            $result = iterator_to_array($result);
+        }
+
         return is_array($result) ? $result : null;
     }
 
