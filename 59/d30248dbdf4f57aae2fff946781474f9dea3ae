@@ -1,0 +1,9 @@
+src/QaseReporter.php
+  672711893ff1cade 275
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "59d30248dbdf4f57aae2fff946781474f9dea3ae",
+  "prompts": {}
+}
