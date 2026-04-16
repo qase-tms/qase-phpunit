@@ -1,0 +1,14 @@
+src/QaseReporter.php
+  672711893ff1cade 279
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "bc8a6ead0e7ec558919af5234a42aeda11bbc8bd",
+  "prompts": {},
+  "humans": {
+    "h_bc3036286a5f6d": {
+      "author": "Ruslan Abelkharisov"
+    }
+  }
+}
