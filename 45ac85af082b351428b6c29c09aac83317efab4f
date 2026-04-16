@@ -1,0 +1,23 @@
+composer.json
+  77eeb48b1d6daaac 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "45ac85af082b351428b6c29c09aac83317efab4f",
+  "prompts": {
+    "77eeb48b1d6daaac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a5aaf29-033a-43be-b2be-73d927cdcd32",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Dmitrii Gridnev",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 503,
+      "overriden_lines": 0
+    }
+  }
+}
