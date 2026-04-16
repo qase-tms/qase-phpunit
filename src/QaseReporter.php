@@ -248,7 +248,26 @@ class QaseReporter implements QaseReporterInterface
         try {
             $originalData = $this->getOriginalDataProviderData($test);
             if ($originalData !== null && is_array($originalData)) {
-                return $this->normalizeDataProviderData($originalData);
+                $normalized = $this->normalizeDataProviderData($originalData);
+
+                $hasOpaque = false;
+                foreach ($normalized as $value) {
+                    if ($value === '{}') {
+                        $hasOpaque = true;
+                        break;
+                    }
+                }
+
+                if ($hasOpaque) {
+                    $fallback = (string) ($this->getCurrentDataSetName($test) ?? '0');
+                    foreach ($normalized as $key => $value) {
+                        if ($value === '{}') {
+                            $normalized[$key] = $fallback;
+                        }
+                    }
+                }
+
+                return $normalized;
             }
             return [];
         } catch (\Throwable $e) {
