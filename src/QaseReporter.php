@@ -487,7 +487,7 @@ class QaseReporter implements QaseReporterInterface
 
         if (is_scalar($value)) {
             $str = (string)$value;
-            return $str === '' ? 'empty' : $str;
+            return trim($str) === '' ? 'empty' : $str;
         }
 
         if (is_array($value)) {
