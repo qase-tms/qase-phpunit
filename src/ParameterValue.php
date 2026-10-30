@@ -53,6 +53,25 @@ class ParameterValue
         return 'empty';
     }
 
+    /**
+     * A provider that reads the clock, Faker or a random source gives a new value on every call. Such a
+     * parameter would be new on every run, so it takes the data set name instead.
+     *
+     * @param array<string, string> $firstRun
+     * @param array<string, string> $secondRun
+     * @return array<string, string>
+     */
+    public static function stableOnly(array $firstRun, array $secondRun): array
+    {
+        foreach ($firstRun as $name => $value) {
+            if (($secondRun[$name] ?? null) !== $value) {
+                $firstRun[$name] = self::OPAQUE;
+            }
+        }
+
+        return $firstRun;
+    }
+
     private static function mockedType(object $mock): string
     {
         $parent = get_parent_class($mock);

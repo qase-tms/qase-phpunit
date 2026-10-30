@@ -277,6 +277,11 @@ class QaseReporter implements QaseReporterInterface
             $originalData = $this->getOriginalDataProviderData($test);
             if ($originalData !== null && is_array($originalData)) {
                 $normalized = $this->normalizeDataProviderData($originalData);
+                $secondRun = $this->getOriginalDataProviderData($test);
+                $normalized = ParameterValue::stableOnly(
+                    $normalized,
+                    is_array($secondRun) ? $this->normalizeDataProviderData($secondRun) : [],
+                );
 
                 $hasOpaque = false;
                 foreach ($normalized as $value) {

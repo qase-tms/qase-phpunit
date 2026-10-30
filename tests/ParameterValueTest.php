@@ -36,6 +36,16 @@ class ParameterValueTest extends TestCase
         $this->assertSame('mock of IteratorAggregate', ParameterValue::toString($mock));
     }
 
+    public function testValueThatChangesBetweenTwoProviderRunsBecomesOpaque(): void
+    {
+        $stable = ParameterValue::stableOnly(
+            ['days' => '3', 'token' => 'a1', 'gone' => 'x'],
+            ['days' => '3', 'token' => 'b2'],
+        );
+
+        $this->assertSame(['days' => '3', 'token' => ParameterValue::OPAQUE, 'gone' => ParameterValue::OPAQUE], $stable);
+    }
+
     public function testStringableObjectKeepsItsStringForm(): void
     {
         $value = new class {

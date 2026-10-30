@@ -196,6 +196,9 @@ argument becomes `param0`, `param1`, and so on. The reporter turns each value in
 Qase keeps every value a parameter ever had. Keep provider values the same between runs: no clock, no random data
 and no fresh ciphertext inside a provider. Build such values in the test method instead.
 
+As a safety net the reporter calls the provider twice for every test and compares the two results. A parameter
+whose value differs between the two calls is sent as the data set name.
+
 ## Methods
 
 ### Qase::comment()
