@@ -1,0 +1,34 @@
+composer.json
+  s_1d74d852ddf8c4::t_8575b38412fa42 37
+composer.lock
+  s_1d74d852ddf8c4::t_f09a3d086a2098 7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ed11a029daa3378aa469a26abb0fb7c38e4a8768",
+  "prompts": {
+    "58d1423f35d0d78e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "88ca6859-b8ff-4514-a13e-8445e4bc039c",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Dmitrii Gridnev <dgridnev@qase.io>",
+      "total_additions": 652,
+      "total_deletions": 0,
+      "accepted_lines": 652,
+      "overriden_lines": 0
+    }
+  },
+  "sessions": {
+    "s_1d74d852ddf8c4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2d0b7013-d3a2-4bc2-8999-a33b8d74c5c0",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Dmitrii Gridnev <dgridnev@qase.io>"
+    }
+  }
+}
