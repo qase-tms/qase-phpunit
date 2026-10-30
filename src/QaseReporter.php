@@ -556,6 +556,12 @@ class QaseReporter implements QaseReporterInterface
             return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         }
 
+        if ($value instanceof \Throwable) {
+            // __toString() carries the stack trace: file paths and line numbers that change with every run.
+            $message = $value->getMessage();
+            return $message === '' ? get_class($value) : get_class($value) . ': ' . $message;
+        }
+
         if (is_object($value)) {
             if (method_exists($value, '__toString')) {
                 return (string)$value;
