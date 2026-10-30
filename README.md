@@ -128,7 +128,8 @@ Example qase.config.json
   "debug": true,
   "testops": {
     "api": {
-      "token": "api_key"
+      "token": "api_key",
+      "host": "qase.io"
     },
     "project": "project_code",
     "run": {
@@ -137,6 +138,8 @@ Example qase.config.json
   }
 }
 ```
+
+If your workspace is on the EU cluster (you open Qase at `app-eu.qase.io`), set `host` to `eu.qase.io`. The default, `qase.io`, is the US cluster.
 
 ## Requirements
 
