@@ -13,7 +13,6 @@ use Qase\PHPUnitReporter\Attributes\AttributeParserInterface;
 
 class QaseReporter implements QaseReporterInterface
 {
-    private const OPAQUE_VALUE = '{}';
 
     private static QaseReporter $instance;
     private array $testResults = [];
@@ -281,7 +280,7 @@ class QaseReporter implements QaseReporterInterface
 
                 $hasOpaque = false;
                 foreach ($normalized as $value) {
-                    if ($value === self::OPAQUE_VALUE) {
+                    if ($value === ParameterValue::OPAQUE) {
                         $hasOpaque = true;
                         break;
                     }
@@ -290,7 +289,7 @@ class QaseReporter implements QaseReporterInterface
                 if ($hasOpaque) {
                     $fallback = (string) ($this->getCurrentDataSetName($test) ?? '0');
                     foreach ($normalized as $key => $value) {
-                        if ($value === self::OPAQUE_VALUE) {
+                        if ($value === ParameterValue::OPAQUE) {
                             $normalized[$key] = $fallback;
                         }
                     }
@@ -476,7 +475,7 @@ class QaseReporter implements QaseReporterInterface
         // Check if indexed array with parameter pairs [name, value, ...]
         if ($this->isIndexedArray($data) && $this->looksLikeParameterPairs($data)) {
             for ($i = 0; $i < count($data); $i += 2) {
-                $params[$this->convertValueToString($data[$i])] = $this->convertValueToString($data[$i + 1]);
+                $params[ParameterValue::toString($data[$i])] = ParameterValue::toString($data[$i + 1]);
             }
             return $params;
         }
@@ -484,7 +483,7 @@ class QaseReporter implements QaseReporterInterface
         // Handle as regular array (indexed or associative)
         foreach ($data as $key => $value) {
             $paramName = is_numeric($key) ? 'param' . $key : $key;
-            $params[$paramName] = $this->convertValueToString($value);
+            $params[$paramName] = ParameterValue::toString($value);
         }
         
         return $params;
@@ -527,49 +526,4 @@ class QaseReporter implements QaseReporterInterface
 
         return array_keys($array) === range(0, count($array) - 1);
     }
-
-    /**
-     * Convert any value to string for parameter representation.
-     *
-     * The Qase API v2 requires that all parameter values are non-empty strings.
-     * Booleans must be handled before the generic is_scalar branch because
-     * PHP casts `false` to `""` (empty string), which the API rejects.
-     * Any other scalar that produces an empty string is substituted with
-     * the literal `"empty"`, consistent with how ResultSpecSerializer handles
-     * null/empty values in the file-reporter path.
-     * 
-     * @param mixed $value
-     * @return string
-     */
-    private function convertValueToString(mixed $value): string
-    {
-        if (is_bool($value)) {
-            return $value ? 'true' : 'false';
-        }
-
-        if (is_scalar($value)) {
-            $str = (string)$value;
-            return trim($str) === '' ? 'empty' : $str;
-        }
-
-        if (is_array($value)) {
-            return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        }
-
-        if ($value instanceof \Throwable) {
-            // __toString() carries the stack trace: file paths and line numbers that change with every run.
-            $message = $value->getMessage();
-            return $message === '' ? get_class($value) : get_class($value) . ': ' . $message;
-        }
-
-        if (is_object($value)) {
-            if (method_exists($value, '__toString')) {
-                return (string)$value;
-            }
-            return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        }
-
-        return 'empty';
-    }
-
 }
