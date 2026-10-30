@@ -1,0 +1,21 @@
+src/QaseReporter.php
+  s_de52690cbd1b1d::t_3ff4966dc4b3cd 559-564
+tests/QaseReporterTest.php
+  s_de52690cbd1b1d::t_3ff4966dc4b3cd 1-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c3faa56907e06f4ab041503878a94eda02470f5d",
+  "prompts": {},
+  "sessions": {
+    "s_de52690cbd1b1d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5102bc7b-aba3-4f36-aeb8-2b46cc133bf7",
+        "model": "claude-fable-5-1"
+      },
+      "human_author": "Ruslan Abelkharisov <rabelkharisov@qase.io>"
+    }
+  }
+}
