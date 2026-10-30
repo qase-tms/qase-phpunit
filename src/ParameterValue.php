@@ -60,11 +60,13 @@ class ParameterValue
             return $parent;
         }
 
-        // An interface mock: drop what the mocking library adds, then keep the most specific interface.
-        $inherited = $parent !== false ? class_implements($parent) : [];
+        // An interface mock: drop what the mocking library adds (Mockery's __toString() brings Stringable),
+        // then keep the most specific interface.
         $own = array_filter(
             class_implements($mock),
-            static fn (string $i): bool => !isset($inherited[$i]) && !str_starts_with($i, 'PHPUnit\\'),
+            static fn (string $i): bool => $i !== \Stringable::class
+                && !str_starts_with($i, 'Mockery\\')
+                && !str_starts_with($i, 'PHPUnit\\'),
         );
         foreach ($own as $candidate) {
             foreach ($own as $other) {

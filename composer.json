@@ -51,8 +51,5 @@
       "*": "dist"
     },
     "sort-packages": true
-  },
-  "require-dev": {
-    "mockery/mockery": "^1.6"
   }
 }
