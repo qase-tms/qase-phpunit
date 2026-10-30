@@ -15,9 +15,22 @@ class ParameterValue
     public const OPAQUE = '{}';
 
     /**
+     * Longer values (a model as JSON, a big array) are cut: Qase keeps every value a parameter ever had.
+     */
+    public const MAX_LENGTH = 500;
+
+    public static function toString(mixed $value): string
+    {
+        $string = self::convert($value);
+
+        // The `u` flag keeps a multibyte character whole; on invalid UTF-8 preg_replace() returns null.
+        return preg_replace('/^(.{' . self::MAX_LENGTH . '}).+$/su', '$1...', $string) ?? $string;
+    }
+
+    /**
      * The Qase API rejects an empty parameter value, so `false` and blank scalars become words.
      */
-    public static function toString(mixed $value): string
+    private static function convert(mixed $value): string
     {
         if (is_bool($value)) {
             return $value ? 'true' : 'false';

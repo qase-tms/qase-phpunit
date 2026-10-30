@@ -191,7 +191,8 @@ argument becomes `param0`, `param1`, and so on. The reporter turns each value in
 - an array becomes JSON;
 - an exception becomes `Class: message`, without the stack trace;
 - a Mockery or PHPUnit mock becomes `mock of <mocked type>`;
-- another object uses its `__toString()`, or JSON otherwise; an object with no public data takes the data set name.
+- another object uses its `__toString()`, or JSON otherwise; an object with no public data takes the data set name;
+- a value longer than 500 characters is cut after 500 characters and ends with `...`.
 
 Qase keeps every value a parameter ever had. Keep provider values the same between runs: no clock, no random data
 and no fresh ciphertext inside a provider. Build such values in the test method instead.

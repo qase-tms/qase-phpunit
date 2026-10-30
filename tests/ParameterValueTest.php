@@ -46,6 +46,20 @@ class ParameterValueTest extends TestCase
         $this->assertSame(['days' => '3', 'token' => ParameterValue::OPAQUE, 'gone' => ParameterValue::OPAQUE], $stable);
     }
 
+    public function testLongValueIsCutAfterTheLimit(): void
+    {
+        $long = str_repeat('я', ParameterValue::MAX_LENGTH + 1);
+
+        $this->assertSame(str_repeat('я', ParameterValue::MAX_LENGTH) . '...', ParameterValue::toString($long));
+    }
+
+    public function testValueAtTheLimitIsKeptWhole(): void
+    {
+        $exact = str_repeat('a', ParameterValue::MAX_LENGTH);
+
+        $this->assertSame($exact, ParameterValue::toString($exact));
+    }
+
     public function testStringableObjectKeepsItsStringForm(): void
     {
         $value = new class {
