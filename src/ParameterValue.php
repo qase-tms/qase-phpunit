@@ -40,7 +40,7 @@ class ParameterValue
 
         if ($value instanceof \Mockery\MockInterface || $value instanceof \PHPUnit\Framework\MockObject\Stub) {
             // A mock's string form is its generated class name plus an object hash that is new in every process.
-            return self::OPAQUE;
+            return 'mock of ' . self::mockedType($value);
         }
 
         if (is_object($value)) {
@@ -51,5 +51,31 @@ class ParameterValue
         }
 
         return 'empty';
+    }
+
+    private static function mockedType(object $mock): string
+    {
+        $parent = get_parent_class($mock);
+        if ($parent !== false && !str_starts_with($parent, 'Mockery\\')) {
+            return $parent;
+        }
+
+        // An interface mock: drop what the mocking library adds, then keep the most specific interface.
+        $inherited = $parent !== false ? class_implements($parent) : [];
+        $own = array_filter(
+            class_implements($mock),
+            static fn (string $i): bool => !isset($inherited[$i]) && !str_starts_with($i, 'PHPUnit\\'),
+        );
+        foreach ($own as $candidate) {
+            foreach ($own as $other) {
+                if ($other !== $candidate && is_subclass_of($other, $candidate)) {
+                    continue 2;
+                }
+            }
+
+            return $candidate;
+        }
+
+        return get_class($mock);
     }
 }

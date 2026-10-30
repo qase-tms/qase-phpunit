@@ -19,14 +19,31 @@ class ParameterValueTest extends TestCase
         $this->assertSame('RuntimeException', ParameterValue::toString(new \RuntimeException()));
     }
 
-    public function testMockeryMockIsOpaque(): void
+    public function testMockeryMockOfAnInterfaceIsNamedByTheInterface(): void
     {
-        $this->assertSame(ParameterValue::OPAQUE, ParameterValue::toString(\Mockery::mock(\Countable::class)));
+        $this->assertSame('mock of Countable', ParameterValue::toString(\Mockery::mock(\Countable::class)));
     }
 
-    public function testPhpUnitMockIsOpaque(): void
+    public function testMockeryMockOfAClassIsNamedByTheClass(): void
     {
-        $this->assertSame(ParameterValue::OPAQUE, ParameterValue::toString($this->createMock(\Countable::class)));
+        $this->assertSame('mock of ArrayObject', ParameterValue::toString(\Mockery::mock(\ArrayObject::class)));
+    }
+
+    public function testMockOfAnExtendedInterfaceIsNamedByTheMostSpecificOne(): void
+    {
+        $mock = \Mockery::mock(\IteratorAggregate::class);
+
+        $this->assertSame('mock of IteratorAggregate', ParameterValue::toString($mock));
+    }
+
+    public function testPhpUnitMockOfAnInterfaceIsNamedByTheInterface(): void
+    {
+        $this->assertSame('mock of Countable', ParameterValue::toString($this->createMock(\Countable::class)));
+    }
+
+    public function testPhpUnitMockOfAClassIsNamedByTheClass(): void
+    {
+        $this->assertSame('mock of ArrayObject', ParameterValue::toString($this->createMock(\ArrayObject::class)));
     }
 
     public function testStringableObjectKeepsItsStringForm(): void
