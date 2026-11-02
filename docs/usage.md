@@ -12,6 +12,7 @@ This guide covers all available annotations and methods for using the Qase PHPUn
   - [Field](#field)
   - [Tags](#tags)
   - [Parameter](#parameter)
+  - [Data provider arguments](#data-provider-arguments)
 - [Methods](#methods)
   - [Qase::comment()](#qasecomment)
   - [Qase::attach()](#qaseattach)
@@ -180,6 +181,24 @@ public function testUserLogin(): void
     // Test implementation
 }
 ```
+
+### Data provider arguments
+
+Every argument of a data set also becomes a parameter. A named data set key is the parameter name, and a positional
+argument becomes `param0`, `param1`, and so on. The reporter turns each value into a string:
+
+- a scalar stays as it is; `false` becomes `false` and a blank string becomes `empty`, because Qase rejects an empty value;
+- an array becomes JSON;
+- an exception becomes `Class: message`, without the stack trace;
+- a Mockery or PHPUnit mock becomes `mock of <mocked type>`;
+- another object uses its `__toString()`, or JSON otherwise; an object with no public data takes the data set name;
+- a value longer than 500 characters is cut after 500 characters and ends with `...`.
+
+Qase keeps every value a parameter ever had. Keep provider values the same between runs: no clock, no random data
+and no fresh ciphertext inside a provider. Build such values in the test method instead.
+
+As a safety net the reporter calls the provider twice for every test and compares the two results. A parameter
+whose value differs between the two calls is sent as the data set name.
 
 ## Methods
 
